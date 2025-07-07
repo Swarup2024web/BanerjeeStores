@@ -1,4 +1,6 @@
 // firebase-config.js
+
+// Import Firebase modules from CDN (v10.12.2)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -9,7 +11,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyDijHMIm_zXAoijJERK6fM35FLUkvMEjDw",
   authDomain: "banerjee-stores.firebaseapp.com",
   projectId: "banerjee-stores",
-  storageBucket: "banerjee-stores.firebasestorage.app",
+  storageBucket: "banerjee-stores.appspot.com",  // ✅ Corrected from firebasestorage.app to appspot.com
   messagingSenderId: "556357413376",
   appId: "1:556357413376:web:901b7af29863fab5e886e5"
 };
@@ -17,7 +19,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Export services
+// Export initialized services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
