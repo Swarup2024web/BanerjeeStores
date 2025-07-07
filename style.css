@@ -1,6 +1,4 @@
-/* style.css */
-
-/* Reset and body */
+/* Reset & Base */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -9,22 +7,24 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f2f6ff;
+  background: #f1f5ff;
   color: #333;
   line-height: 1.6;
 }
 
-/* Header (Injected) */
+/* -----------------------
+   Header (Injected)
+------------------------ */
 .main-header {
   position: sticky;
   top: 0;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 30px;
+  padding: 18px 30px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   border-radius: 0 0 20px 20px;
 }
@@ -35,33 +35,30 @@ body {
   color: #1a1a1a;
 }
 
+.main-header nav {
+  display: flex;
+  gap: 20px;
+}
+
 .main-header nav a {
-  margin-left: 20px;
   text-decoration: none;
   color: #222;
   font-weight: 600;
-  position: relative;
+  padding: 6px 10px;
+  border-radius: 10px;
+  transition: background 0.3s, color 0.3s;
 }
 
-.main-header nav a::after {
-  content: "";
-  display: block;
-  width: 0%;
-  height: 2px;
-  background: #1e90ff;
-  transition: width 0.3s;
-  position: absolute;
-  bottom: -4px;
-  left: 0;
+.main-header nav a:hover {
+  background-color: #dfefff;
+  color: #0077cc;
 }
 
-.main-header nav a:hover::after {
-  width: 100%;
-}
-
-/* Product Section */
+/* -----------------------
+   Product Section
+------------------------ */
 .product-section {
-  padding: 30px;
+  padding: 40px 20px;
   max-width: 1200px;
   margin: auto;
 }
@@ -73,28 +70,34 @@ body {
   color: #2a2a2a;
 }
 
-/* Product Grid */
+/* -----------------------
+   Product Grid
+------------------------ */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 25px;
+  padding: 0 10px;
 }
 
-/* Product Card (Neumorphic) */
+/* Product Card (Neumorphic + Glassmorphic) */
 .product-grid div {
-  background: #ffffffcc;
-  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
   border-radius: 20px;
-  padding: 15px;
+  padding: 16px;
   box-shadow:
-    5px 5px 15px rgba(0, 0, 0, 0.1),
-    -5px -5px 15px rgba(255, 255, 255, 0.5);
-  transition: transform 0.3s ease;
+    4px 4px 12px rgba(0, 0, 0, 0.08),
+    -4px -4px 12px rgba(255, 255, 255, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
 }
 
 .product-grid div:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
+  box-shadow:
+    6px 6px 16px rgba(0, 0, 0, 0.1),
+    -6px -6px 16px rgba(255, 255, 255, 0.6);
 }
 
 .product-grid img {
@@ -102,12 +105,12 @@ body {
   max-height: 180px;
   object-fit: cover;
   border-radius: 15px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .product-grid h3 {
   font-size: 1.1rem;
-  margin: 10px 0 5px;
+  margin: 10px 0 6px;
   color: #1a1a1a;
 }
 
@@ -116,29 +119,39 @@ body {
   color: #0077cc;
 }
 
-/* Footer */
+/* -----------------------
+   Footer
+------------------------ */
 .footer {
   text-align: center;
   padding: 20px;
   font-size: 0.9rem;
-  background: #e9f0fb;
+  background: #eaf1fb;
   margin-top: 40px;
   border-top: 1px solid #ccc;
 }
 
-/* Responsive */
-@media screen and (max-width: 600px) {
+/* -----------------------
+   Responsive
+------------------------ */
+@media screen and (max-width: 768px) {
   .main-header {
     flex-direction: column;
     align-items: flex-start;
   }
 
+  .main-header nav {
+    flex-direction: column;
+    width: 100%;
+    margin-top: 10px;
+  }
+
   .main-header nav a {
-    display: block;
-    margin: 10px 0 0;
+    margin: 5px 0;
+    width: 100%;
   }
 
   .product-section {
-    padding: 15px;
+    padding: 20px 10px;
   }
-}
+  }
