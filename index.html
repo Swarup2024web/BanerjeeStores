@@ -12,14 +12,14 @@
   <!-- 🔗 Injected Header -->
   <div id="header-container"></div>
 
-  <!-- 🧭 Sticky Category Bar -->
+  <!-- 🧭 Category Bar -->
   <div class="category-bar" id="categoryBar">
-    <!-- Category buttons injected dynamically -->
+    <!-- Categories dynamically inserted here -->
   </div>
 
   <!-- 🛍️ Products Section -->
   <section class="products-section" id="productList">
-    <!-- Product cards injected dynamically -->
+    <!-- Product cards injected here -->
   </section>
 
   <!-- 🔌 Firebase Config -->
@@ -28,9 +28,13 @@
   <!-- 🚀 Main Script -->
   <script type="module">
     import { db } from "./firebase-config.js";
-    import { collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      collection,
+      getDocs,
+      query
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Inject header.html
+    // Inject header
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
@@ -42,15 +46,15 @@
 
     let allProducts = [];
 
-    // Fetch products from Firestore
+    // Fetch products from Firebase
     async function fetchProducts() {
       const q = query(collection(db, "products"));
-      const querySnapshot = await getDocs(q);
+      const snapshot = await getDocs(q);
 
       allProducts = [];
       const categorySet = new Set();
 
-      querySnapshot.forEach((doc) => {
+      snapshot.forEach(doc => {
         const data = doc.data();
         allProducts.push(data);
         categorySet.add(data.category);
@@ -69,7 +73,7 @@
         return;
       }
 
-      products.forEach((product) => {
+      products.forEach(product => {
         const card = document.createElement("div");
         card.className = "product-card";
         card.innerHTML = `
@@ -97,7 +101,7 @@
       allBtn.addEventListener("click", () => renderProducts(allProducts));
       categoryBar.appendChild(allBtn);
 
-      categories.forEach((cat) => {
+      categories.forEach(cat => {
         const btn = document.createElement("button");
         btn.className = "category-btn";
         btn.textContent = cat;
@@ -109,7 +113,7 @@
       });
     }
 
-    // Initial fetch
+    // Initial load
     fetchProducts();
   </script>
 
