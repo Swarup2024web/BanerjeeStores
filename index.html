@@ -3,31 +3,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Banerjee Stores</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banerjee Stores - Grocery Online</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Inject Header -->
-  <script src="inject-header.js"></script>
+  <!-- Header will be injected here -->
+  <div id="header-placeholder"></div>
 
-  <!-- Main Content -->
-  <main>
-    <section class="product-section">
-      <h2>🛍️ Available Products</h2>
-      <div id="product-list" class="product-grid">
-        <!-- Firebase Firestore products will load here -->
-      </div>
+  <main class="main-content">
+    <section class="welcome">
+      <h2>Welcome to Banerjee Stores!</h2>
+      <p>Your trusted online grocery destination. Shop fresh, save more!</p>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p>&copy; 2025 Banerjee Stores. All rights reserved.</p>
-  </footer>
-
-  <!-- Firebase App Logic -->
-  <script type="module" src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
