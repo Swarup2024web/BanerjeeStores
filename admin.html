@@ -6,12 +6,6 @@
   <title>Admin Panel - Banerjee Stores</title>
   <script type="module" src="firebase-config.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #e0f7fa, #b2ebf2);
@@ -40,7 +34,7 @@
       margin-bottom: 2rem;
     }
 
-    input, select {
+    input {
       padding: 0.6rem 1rem;
       border: none;
       border-radius: 25px;
@@ -71,18 +65,24 @@
     }
 
     .product-card {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
       background: rgba(255,255,255,0.6);
       border-radius: 10px;
       padding: 1rem;
       box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      align-items: center;
+    }
+
+    .product-img {
+      max-width: 60px;
+      max-height: 60px;
+      margin-right: 1rem;
     }
 
     .product-card input {
+      margin-top: 5px;
       width: 100%;
-      margin-top: 0.5rem;
     }
 
     .product-card button {
@@ -90,17 +90,12 @@
       padding: 0.4rem 1rem;
       margin-left: 0.5rem;
     }
-
-    .product-img {
-      max-width: 60px;
-      max-height: 60px;
-    }
   </style>
 </head>
 <body>
 
   <div class="admin-container">
-    <h1>🛠️ Admin Panel</h1>
+    <h1>🛠️ Admin Panel - Banerjee Stores</h1>
 
     <form id="productForm">
       <input type="text" id="name" placeholder="Product Name" required />
@@ -111,33 +106,31 @@
       <button type="submit">Add Product</button>
     </form>
 
-    <h2>📦 Existing Products</h2>
+    <h2>📦 Product List</h2>
     <div id="productList"></div>
   </div>
 
   <script type="module">
     import { db, storage } from './firebase-config.js';
     import {
-      collection, addDoc, getDocs, deleteDoc,
-      doc, updateDoc
+      collection, addDoc, getDocs, deleteDoc, doc, updateDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import {
       ref, uploadBytes, getDownloadURL
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    const productForm = document.getElementById('productForm');
-    const productList = document.getElementById('productList');
+    const productForm = document.getElementById("productForm");
+    const productList = document.getElementById("productList");
     const productsRef = collection(db, "products");
 
-    // Upload image to Firebase Storage
+    // 📤 Upload image and get download URL
     async function uploadImage(file) {
       const storageRef = ref(storage, "products/" + file.name);
       await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      return url;
+      return await getDownloadURL(storageRef);
     }
 
-    // Add new product
+    // ➕ Add Product
     productForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = productForm.name.value.trim();
@@ -150,12 +143,16 @@
 
       const imageURL = await uploadImage(imageFile);
 
-      await addDoc(productsRef, { name, category, unit, price, imageURL });
+      await addDoc(productsRef, {
+        name, category, unit, price, imageURL
+      });
+
+      alert("✅ Product added successfully!");
       productForm.reset();
       loadProducts();
     });
 
-    // Load existing products
+    // 📄 Load all products
     async function loadProducts() {
       productList.innerHTML = "Loading...";
       const snapshot = await getDocs(productsRef);
@@ -169,27 +166,28 @@
         card.className = "product-card";
         card.innerHTML = `
           <div>
-            <img class="product-img" src="${data.imageURL}" alt="${data.name}" />
+            <img class="product-img" src="${data.imageURL}" />
             <input value="${data.name}" data-id="${id}" data-field="name"/>
             <input value="${data.category}" data-id="${id}" data-field="category"/>
             <input value="${data.unit}" data-id="${id}" data-field="unit"/>
-            <input value="${data.price}" type="number" data-id="${id}" data-field="price"/>
+            <input type="number" value="${data.price}" data-id="${id}" data-field="price"/>
           </div>
           <div>
-            <button data-id="${id}" class="update-btn">Update</button>
+            <button class="update-btn" data-id="${id}">Update</button>
           </div>
           <div>
-            <button data-id="${id}" class="delete-btn">Delete</button>
+            <button class="delete-btn" data-id="${id}">Delete</button>
           </div>
         `;
+
         productList.appendChild(card);
       });
 
-      addListeners();
+      addActionListeners();
     }
 
-    // Update + Delete Event Listeners
-    function addListeners() {
+    // ✏️ Update & 🗑️ Delete Events
+    function addActionListeners() {
       document.querySelectorAll(".update-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
           const id = btn.dataset.id;
@@ -201,7 +199,7 @@
           });
           updated.price = parseFloat(updated.price);
           await updateDoc(doc(db, "products", id), updated);
-          alert("✅ Product updated");
+          alert("✅ Updated");
           loadProducts();
         });
       });
@@ -210,13 +208,13 @@
         btn.addEventListener("click", async () => {
           const id = btn.dataset.id;
           await deleteDoc(doc(db, "products", id));
-          alert("🗑️ Product deleted");
+          alert("🗑️ Deleted");
           loadProducts();
         });
       });
     }
 
-    // Initial Load
+    // 🚀 Load products initially
     loadProducts();
   </script>
 
