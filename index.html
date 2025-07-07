@@ -8,23 +8,24 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>🛍️ Banerjee Stores</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="login.html">Login</a>
-      <a href="register.html">Register</a>
-      <a href="cart.html">Cart</a>
-    </nav>
-  </header>
+
+  <!-- Header will be injected -->
+  <script src="inject-header.js"></script>
 
   <main>
-    <h2>Products</h2>
-    <div id="product-list" class="product-grid">
-      <!-- Firebase products will load here -->
-    </div>
+    <section class="product-section">
+      <h2>🛍️ Available Products</h2>
+      <div id="product-list" class="product-grid">
+        <!-- Products will load here from Firestore -->
+      </div>
+    </section>
   </main>
 
+  <footer class="footer">
+    <p>&copy; 2025 Banerjee Stores. All rights reserved.</p>
+  </footer>
+
+  <!-- Firebase logic -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
