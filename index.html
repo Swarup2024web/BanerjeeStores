@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Banerjee Stores - Grocery Online</title>
+  <title>Banerjee Stores - Products</title>
   <link rel="stylesheet" href="style.css" />
-
-  <!-- Inject header BEFORE body renders -->
   <script>
     document.write('<div id="header-placeholder"></div>');
     const xhr = new XMLHttpRequest();
@@ -19,11 +17,44 @@
 </head>
 <body>
 
-  <main class="main-content">
-    <section class="welcome">
-      <h2>Welcome to Banerjee Stores!</h2>
-      <p>Your trusted online grocery destination. Shop fresh, save more!</p>
-    </section>
+  <!-- Sticky Category Bar -->
+  <div class="category-bar">
+    <button>Fruits</button>
+    <button>Vegetables</button>
+    <button>Dairy</button>
+    <button>Snacks</button>
+    <button>Beverages</button>
+  </div>
+
+  <!-- Products Section -->
+  <main class="products-section">
+    
+    <div class="product">
+      <div class="product-img">
+        <img src="https://via.placeholder.com/150" alt="Product" />
+      </div>
+      <div class="product-info">
+        <h3>Fresh Apples</h3>
+        <p>Juicy and fresh apples straight from the farm.</p>
+        <p><strong>₹120 / kg</strong></p>
+        <button>Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <div class="product-img">
+        <img src="https://via.placeholder.com/150" alt="Product" />
+      </div>
+      <div class="product-info">
+        <h3>Milk - 1L</h3>
+        <p>Pure and fresh cow milk delivered to your doorstep.</p>
+        <p><strong>₹60 / litre</strong></p>
+        <button>Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Add more products here -->
+
   </main>
 
 </body>
