@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Banerjee Stores - Products</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Inject header BEFORE body renders -->
   <script>
     document.write('<div id="header-placeholder"></div>');
     const xhr = new XMLHttpRequest();
@@ -29,31 +32,31 @@
   <!-- Products Section -->
   <main class="products-section">
     
-    <div class="product">
+    <div class="product-card">
       <div class="product-img">
-        <img src="https://via.placeholder.com/150" alt="Product" />
+        <img src="https://via.placeholder.com/120" alt="Fresh Apples" />
       </div>
       <div class="product-info">
         <h3>Fresh Apples</h3>
-        <p>Juicy and fresh apples straight from the farm.</p>
+        <p>Juicy apples straight from farm.</p>
         <p><strong>₹120 / kg</strong></p>
         <button>Add to Cart</button>
       </div>
     </div>
 
-    <div class="product">
+    <div class="product-card">
       <div class="product-img">
-        <img src="https://via.placeholder.com/150" alt="Product" />
+        <img src="https://via.placeholder.com/120" alt="Milk" />
       </div>
       <div class="product-info">
         <h3>Milk - 1L</h3>
-        <p>Pure and fresh cow milk delivered to your doorstep.</p>
+        <p>Pure fresh cow milk.</p>
         <p><strong>₹60 / litre</strong></p>
         <button>Add to Cart</button>
       </div>
     </div>
 
-    <!-- Add more products here -->
+    <!-- Add more product-card blocks here -->
 
   </main>
 
