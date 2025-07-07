@@ -3,62 +3,116 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Banerjee Stores - Products</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
-  <!-- Inject header BEFORE body renders -->
-  <script>
-    document.write('<div id="header-placeholder"></div>');
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'header.html', false); // sync request
-    xhr.send(null);
-    if (xhr.status === 200) {
-      document.getElementById('header-placeholder').outerHTML = xhr.responseText;
-    }
-  </script>
+  <title>Banerjee Stores</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-  <!-- Sticky Category Bar -->
-  <div class="category-bar">
-    <button>Fruits</button>
-    <button>Vegetables</button>
-    <button>Dairy</button>
-    <button>Snacks</button>
-    <button>Beverages</button>
+  <!-- 🔗 Injected Header -->
+  <div id="header-container"></div>
+
+  <!-- 🧭 Category Bar (fetched from Firestore) -->
+  <div class="category-bar" id="categoryBar">
+    <!-- Category buttons will be injected here -->
   </div>
 
-  <!-- Products Section -->
-  <main class="products-section">
-    
-    <div class="product-card">
-      <div class="product-img">
-        <img src="https://via.placeholder.com/120" alt="Fresh Apples" />
-      </div>
-      <div class="product-info">
-        <h3>Fresh Apples</h3>
-        <p>Juicy apples straight from farm.</p>
-        <p><strong>₹120 / kg</strong></p>
-        <button>Add to Cart</button>
-      </div>
-    </div>
+  <!-- 🛍️ Products Display Section -->
+  <section class="products-section" id="productList">
+    <!-- Products will be loaded here from Firestore -->
+  </section>
 
-    <div class="product-card">
-      <div class="product-img">
-        <img src="https://via.placeholder.com/120" alt="Milk" />
-      </div>
-      <div class="product-info">
-        <h3>Milk - 1L</h3>
-        <p>Pure fresh cow milk.</p>
-        <p><strong>₹60 / litre</strong></p>
-        <button>Add to Cart</button>
-      </div>
-    </div>
+  <!-- 🔌 Firebase Config -->
+  <script type="module" src="firebase-config.js"></script>
 
-    <!-- Add more product-card blocks here -->
+  <!-- 🚀 Dynamic Script -->
+  <script type="module">
+    import { db } from "./firebase-config.js";
+    import { collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  </main>
+    // Inject header
+    fetch("header.html")
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById("header-container").innerHTML = data;
+      });
+
+    const productList = document.getElementById("productList");
+    const categoryBar = document.getElementById("categoryBar");
+
+    let allProducts = [];
+
+    // Fetch Products
+    async function fetchProducts() {
+      const q = query(collection(db, "products"));
+      const querySnapshot = await getDocs(q);
+
+      allProducts = [];
+      let categorySet = new Set();
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        allProducts.push(data);
+        categorySet.add(data.category);
+      });
+
+      renderCategories([...categorySet]);
+      renderProducts(allProducts); // Show all on default
+    }
+
+    // Render Products
+    function renderProducts(products) {
+      productList.innerHTML = "";
+
+      if (products.length === 0) {
+        productList.innerHTML = "<p>No products available.</p>";
+        return;
+      }
+
+      products.forEach((product) => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = `
+          <div class="product-img">
+            <img src="${product.imageURL}" alt="${product.name}" />
+          </div>
+          <div class="product-info">
+            <h3>${product.name}</h3>
+            <p>Category: ${product.category}</p>
+            <p>Unit: ${product.unit}</p>
+            <p>Price: ₹${product.price}</p>
+            <button>Add to Cart</button>
+          </div>
+        `;
+        productList.appendChild(card);
+      });
+    }
+
+    // Render Category Buttons
+    function renderCategories(categories) {
+      categoryBar.innerHTML = "";
+
+      const allBtn = document.createElement("button");
+      allBtn.textContent = "All";
+      allBtn.dataset.category = "All";
+      allBtn.addEventListener("click", () => renderProducts(allProducts));
+      categoryBar.appendChild(allBtn);
+
+      categories.forEach((cat) => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        btn.dataset.category = cat;
+        btn.addEventListener("click", () => {
+          const filtered = allProducts.filter(p => p.category === cat);
+          renderProducts(filtered);
+        });
+        categoryBar.appendChild(btn);
+      });
+    }
+
+    // Load Everything
+    fetchProducts();
+  </script>
 
 </body>
 </html>
