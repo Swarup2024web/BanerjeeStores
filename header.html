@@ -1,11 +1,11 @@
 <header class="site-header">
-  <!-- Row 1: Logo + Name -->
+  <!-- Row 1: Logo + Website Name -->
   <div class="header-top">
-    <img src="assets/logo.png" alt="Logo" class="logo" />
+    <img src="https://raw.githubusercontent.com/Swarup2024web/banerjee-stores/main/assets/logo.png" alt="Logo" class="logo" />
     <h1 class="site-title">Banerjee Stores</h1>
   </div>
 
-  <!-- Row 2: Navigation -->
+  <!-- Row 2: Navigation (single row always) -->
   <nav class="nav-bar">
     <a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Home</a>
     <a href="cart.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Cart</a>
@@ -20,7 +20,7 @@
 </header>
 
 <style>
-/* Header Glassmorphism + Skeuomorphism */
+/* Header Glassmorphic + Skeuomorphic Design */
 .site-header {
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(12px);
@@ -31,12 +31,9 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
 }
 
-/* Row 1: Logo + Name */
+/* Row 1: Logo + Title */
 .header-top {
   display: flex;
   align-items: center;
@@ -56,12 +53,14 @@
   color: #006064;
 }
 
-/* Row 2: Nav Bar */
+/* Row 2: Navigation in a single row always */
 .nav-bar {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: nowrap;
   justify-content: center;
-  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .nav-link {
@@ -73,6 +72,7 @@
   background: linear-gradient(145deg, #b2ebf2, #e0f7fa);
   box-shadow: inset 2px 2px 5px #a0dede, inset -2px -2px 5px #ffffff;
   transition: 0.3s ease;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -85,7 +85,7 @@
   color: white;
 }
 
-/* Row 3: Search */
+/* Row 3: Search Row */
 .search-row {
   display: flex;
   width: 100%;
@@ -112,14 +112,14 @@
   border-radius: 20px;
   cursor: pointer;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-  transition: 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 .search-btn:hover {
   background: #00838f;
 }
 
-/* Responsive Design */
+/* Responsive Adjustments */
 @media (max-width: 600px) {
   .site-header {
     padding: 1rem;
@@ -127,11 +127,6 @@
 
   .header-top {
     flex-direction: column;
-  }
-
-  .nav-bar {
-    flex-direction: column;
-    align-items: center;
   }
 
   .search-row {
