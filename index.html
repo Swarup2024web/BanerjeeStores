@@ -12,25 +12,25 @@
   <!-- 🔗 Injected Header -->
   <div id="header-container"></div>
 
-  <!-- 🧭 Category Bar (fetched from Firestore) -->
+  <!-- 🧭 Sticky Category Bar -->
   <div class="category-bar" id="categoryBar">
-    <!-- Category buttons will be injected here -->
+    <!-- Category buttons injected dynamically -->
   </div>
 
-  <!-- 🛍️ Products Display Section -->
+  <!-- 🛍️ Products Section -->
   <section class="products-section" id="productList">
-    <!-- Products will be loaded here from Firestore -->
+    <!-- Product cards injected dynamically -->
   </section>
 
   <!-- 🔌 Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
 
-  <!-- 🚀 Dynamic Script -->
+  <!-- 🚀 Main Script -->
   <script type="module">
     import { db } from "./firebase-config.js";
     import { collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Inject header
+    // Inject header.html
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
@@ -42,13 +42,13 @@
 
     let allProducts = [];
 
-    // Fetch Products
+    // Fetch products from Firestore
     async function fetchProducts() {
       const q = query(collection(db, "products"));
       const querySnapshot = await getDocs(q);
 
       allProducts = [];
-      let categorySet = new Set();
+      const categorySet = new Set();
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
@@ -57,10 +57,10 @@
       });
 
       renderCategories([...categorySet]);
-      renderProducts(allProducts); // Show all on default
+      renderProducts(allProducts);
     }
 
-    // Render Products
+    // Render product cards
     function renderProducts(products) {
       productList.innerHTML = "";
 
@@ -78,30 +78,29 @@
           </div>
           <div class="product-info">
             <h3>${product.name}</h3>
-            <p>Category: ${product.category}</p>
-            <p>Unit: ${product.unit}</p>
-            <p>Price: ₹${product.price}</p>
-            <button>Add to Cart</button>
+            <p><strong>Unit:</strong> ${product.unit}</p>
+            <p><strong>Price:</strong> ₹${product.price}</p>
+            <button class="add-cart-btn">Add to Cart</button>
           </div>
         `;
         productList.appendChild(card);
       });
     }
 
-    // Render Category Buttons
+    // Render category buttons
     function renderCategories(categories) {
       categoryBar.innerHTML = "";
 
       const allBtn = document.createElement("button");
+      allBtn.className = "category-btn";
       allBtn.textContent = "All";
-      allBtn.dataset.category = "All";
       allBtn.addEventListener("click", () => renderProducts(allProducts));
       categoryBar.appendChild(allBtn);
 
       categories.forEach((cat) => {
         const btn = document.createElement("button");
+        btn.className = "category-btn";
         btn.textContent = cat;
-        btn.dataset.category = cat;
         btn.addEventListener("click", () => {
           const filtered = allProducts.filter(p => p.category === cat);
           renderProducts(filtered);
@@ -110,7 +109,7 @@
       });
     }
 
-    // Load Everything
+    // Initial fetch
     fetchProducts();
   </script>
 
