@@ -102,7 +102,7 @@
       <input type="text" id="category" placeholder="Category" required />
       <input type="text" id="unit" placeholder="Unit (e.g. 1kg)" required />
       <input type="number" id="price" placeholder="Price (₹)" required />
-      <input type="file" id="imageFile" accept="image/*" required />
+      <input type="text" id="imageURL" placeholder="Paste GitHub Image URL" required />
       <button type="submit">Add Product</button>
     </form>
 
@@ -111,24 +111,14 @@
   </div>
 
   <script type="module">
-    import { db, storage } from './firebase-config.js';
+    import { db } from './firebase-config.js';
     import {
       collection, addDoc, getDocs, deleteDoc, doc, updateDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import {
-      ref, uploadBytes, getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
     const productForm = document.getElementById("productForm");
     const productList = document.getElementById("productList");
     const productsRef = collection(db, "products");
-
-    // 📤 Upload image and get download URL
-    async function uploadImage(file) {
-      const storageRef = ref(storage, "products/" + file.name);
-      await uploadBytes(storageRef, file);
-      return await getDownloadURL(storageRef);
-    }
 
     // ➕ Add Product
     productForm.addEventListener("submit", async (e) => {
@@ -137,11 +127,9 @@
       const category = productForm.category.value.trim();
       const unit = productForm.unit.value.trim();
       const price = parseFloat(productForm.price.value.trim());
-      const imageFile = productForm.imageFile.files[0];
+      const imageURL = productForm.imageURL.value.trim();
 
-      if (!imageFile) return alert("Please select an image.");
-
-      const imageURL = await uploadImage(imageFile);
+      if (!imageURL.startsWith("http")) return alert("Invalid image URL");
 
       await addDoc(productsRef, {
         name, category, unit, price, imageURL
@@ -171,6 +159,7 @@
             <input value="${data.category}" data-id="${id}" data-field="category"/>
             <input value="${data.unit}" data-id="${id}" data-field="unit"/>
             <input type="number" value="${data.price}" data-id="${id}" data-field="price"/>
+            <input value="${data.imageURL}" data-id="${id}" data-field="imageURL"/>
           </div>
           <div>
             <button class="update-btn" data-id="${id}">Update</button>
@@ -214,7 +203,7 @@
       });
     }
 
-    // 🚀 Load products initially
+    // 🚀 Load on page start
     loadProducts();
   </script>
 
