@@ -1,36 +1,142 @@
-<!-- header.html -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+<header class="site-header">
+  <!-- Row 1: Logo + Name -->
+  <div class="header-top">
+    <img src="https://raw.githubusercontent.com/Swarup2024web/banerjee-stores/main/assets/logo.png" alt="Logo" class="logo" />
+    <h1 class="site-title">Banerjee Stores</h1>
+  </div>
 
-<header class="glassy-header">
-  <div class="header-container">
+  <!-- Row 2: Navigation -->
+  <nav class="nav-bar">
+    <a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Home</a>
+    <a href="cart.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Cart</a>
+    <a href="account.html" class="nav-link"><i class="fas fa-user-circle"></i> Account</a>
+  </nav>
 
-    <!-- Row 1: Logo and Name -->
-    <div class="header-row logo-row">
-      <h1 class="store-logo">🛒 Banerjee Stores</h1>
-    </div>
-
-    <!-- Row 2: Navigation -->
-    <div class="header-row nav-row">
-      <nav class="store-nav">
-        <a href="index.html" class="nav-link active">
-          <i class="fas fa-home"></i>
-          <span>Home</span>
-        </a>
-        <a href="cart.html" class="nav-link">
-          <i class="fas fa-shopping-cart"></i>
-          <span>Cart</span>
-        </a>
-        <a href="account.html" class="nav-link">
-          <i class="fas fa-user-circle"></i>
-          <span>Account</span>
-        </a>
-      </nav>
-    </div>
-
-    <!-- Row 3: Search Box -->
-    <div class="header-row search-row">
-      <input type="text" class="search-input" placeholder="Search products..." />
-    </div>
-
+  <!-- Row 3: Search Bar -->
+  <div class="search-row">
+    <input type="text" placeholder="Search products..." class="search-input" />
+    <button class="search-btn"><i class="fas fa-search"></i></button>
   </div>
 </header>
+
+<style>
+/* Header Glassmorphism + Skeuomorphism */
+.site-header {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Row 1: Logo + Name */
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+}
+
+.site-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #006064;
+}
+
+/* Row 2: Nav Bar */
+.nav-bar {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-weight: 500;
+  color: #00796b;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #b2ebf2, #e0f7fa);
+  box-shadow: inset 2px 2px 5px #a0dede, inset -2px -2px 5px #ffffff;
+  transition: 0.3s ease;
+}
+
+.nav-link:hover {
+  background: #00bcd4;
+  color: white;
+}
+
+.nav-link.active {
+  background: #00796b;
+  color: white;
+}
+
+/* Row 3: Search */
+.search-row {
+  display: flex;
+  width: 100%;
+  max-width: 400px;
+  gap: 0.5rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid #b2ebf2;
+  box-shadow: inset 2px 2px 5px #cceef2, inset -2px -2px 5px #ffffff;
+  outline: none;
+  background: #ffffffaa;
+  font-size: 1rem;
+}
+
+.search-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: #00acc1;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  transition: 0.3s ease;
+}
+
+.search-btn:hover {
+  background: #00838f;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .site-header {
+    padding: 1rem;
+  }
+
+  .header-top {
+    flex-direction: column;
+  }
+
+  .nav-bar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .search-row {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+}
+  </style>
