@@ -6,51 +6,61 @@
   <title>My Account – Banerjee Stores</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <style>
+    /* Hide body content until header is loaded */
+    #pageWrapper { display: none; }
+  </style>
 </head>
 <body>
 
-  <!-- 🔗 Header -->
+  <!-- 🔗 Header container -->
   <div id="header-container"></div>
 
-  <main class="account-container">
-    <h2>👤 My Account</h2>
+  <!-- 📦 Main page content, hidden until header is loaded -->
+  <div id="pageWrapper">
 
-    <div id="auth-section">
-      <!-- Login/Register Form -->
-      <div id="auth-form">
-        <input type="email" id="email" placeholder="Email" required />
-        <input type="password" id="password" placeholder="Password" required />
-        <div class="btn-group">
-          <button id="loginBtn">Login</button>
-          <button id="registerBtn">Register</button>
+    <main class="account-container">
+      <h2>👤 My Account</h2>
+
+      <div id="auth-section">
+        <!-- Login/Register Form -->
+        <div id="auth-form">
+          <input type="email" id="email" placeholder="Email" required />
+          <input type="password" id="password" placeholder="Password" required />
+          <div class="btn-group">
+            <button id="loginBtn">Login</button>
+            <button id="registerBtn">Register</button>
+          </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profile-section" class="hidden">
+          <p><strong>Logged in as:</strong> <span id="userEmail"></span></p>
+          <form id="profileForm">
+            <input type="text" id="name" placeholder="Full Name" required />
+            <input type="tel" id="phone" placeholder="Phone Number" required />
+            <input type="date" id="dob" placeholder="Date of Birth" />
+
+            <input type="text" id="village" placeholder="Village" required />
+            <input type="text" id="para" placeholder="Para / Lane" required />
+            <input type="text" id="city" placeholder="City" required />
+            <input type="text" id="pin" placeholder="PIN Code" required />
+            <input type="text" id="state" placeholder="State" required />
+            <input type="text" id="landmark" placeholder="Landmark (optional)" />
+
+            <button type="submit">💾 Save Profile</button>
+          </form>
+
+          <div class="account-links">
+            <a href="order.html">📦 My Orders</a>
+            <button id="logoutBtn">Logout</button>
+          </div>
         </div>
       </div>
+    </main>
 
-      <!-- Profile Section -->
-      <div id="profile-section" class="hidden">
-        <p><strong>Logged in as:</strong> <span id="userEmail"></span></p>
-        <form id="profileForm">
-          <input type="text" id="name" placeholder="Full Name" required />
-          <input type="tel" id="phone" placeholder="Phone Number" required />
-          <input type="date" id="dob" placeholder="Date of Birth" />
-
-          <input type="text" id="village" placeholder="Village" required />
-          <input type="text" id="para" placeholder="Para / Lane" required />
-          <input type="text" id="city" placeholder="City" required />
-          <input type="text" id="pin" placeholder="PIN Code" required />
-          <input type="text" id="state" placeholder="State" required />
-          <input type="text" id="landmark" placeholder="Landmark (optional)" />
-
-          <button type="submit">💾 Save Profile</button>
-        </form>
-
-        <div class="account-links">
-          <a href="order.html">📦 My Orders</a>
-          <button id="logoutBtn">Logout</button>
-        </div>
-      </div>
-    </div>
-  </main>
+  </div>
 
   <!-- Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
@@ -70,11 +80,12 @@
       getDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Inject header
+    // Inject header and THEN show page
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
         document.getElementById("header-container").innerHTML = data;
+        document.getElementById("pageWrapper").style.display = "block";
       });
 
     const emailInput = document.getElementById("email");
