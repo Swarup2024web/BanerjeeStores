@@ -3,22 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Account – Banerjee Stores</title>
+  <title>Account – Banerjee Stores</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>#pageWrapper { display: none; }</style>
 </head>
 <body>
 
-  <!-- 🔗 Injected Header -->
+  <!-- 🔗 Header -->
   <div id="header-container"></div>
 
-  <!-- 🔒 Account Page Content -->
+  <!-- 🔐 Account Section -->
   <div id="pageWrapper">
     <main class="account-container">
-      <h2>👤 My Account</h2>
-
-      <!-- 🔑 Login/Register Section -->
+      
+      <!-- 🧾 Login/Register Form (only if not logged in) -->
       <div id="auth-form">
         <input type="email" id="email" placeholder="Email" required />
         <input type="password" id="password" placeholder="Password" required />
@@ -28,48 +27,40 @@
         </div>
       </div>
 
-      <!-- 👤 Profile View Section -->
+      <!-- 👤 Logged-in View -->
       <div id="profile-section" class="hidden">
-        <p><strong>Logged in as:</strong> <span id="userEmail"></span></p>
-
-        <div id="profileView">
-          <p><strong>Name:</strong> <span id="viewName"></span></p>
-          <p><strong>Phone:</strong> <span id="viewPhone"></span></p>
-          <p><strong>Date of Birth:</strong> <span id="viewDOB"></span></p>
-          <p><strong>Address:</strong><br>
-            <span id="viewAddress"></span>
-          </p>
-          <div class="btn-group">
-            <button id="editBtn">✏️ Edit Profile</button>
-            <a href="order.html" class="btn-link">📦 My Orders</a>
-            <button id="logoutBtn">Logout</button>
-          </div>
+        <h2>Welcome back, <span id="viewName"></span> 👋</h2>
+        <p><strong>📍 Address:</strong> <span id="viewAddress"></span></p>
+        <p><strong>📞 Phone:</strong> <span id="viewPhone"></span></p>
+        <div class="btn-group">
+          <button id="editBtn">✏️ Edit Profile</button>
+          <a href="order.html" class="btn-link">📦 My Orders</a>
+          <button id="logoutBtn">🔓 Logout</button>
         </div>
-
-        <!-- ✏️ Profile Edit Form -->
-        <form id="profileForm" class="hidden">
-          <input type="text" id="name" placeholder="Full Name" required />
-          <input type="tel" id="phone" placeholder="Phone Number" required />
-          <input type="date" id="dob" placeholder="Date of Birth" />
-          <input type="text" id="village" placeholder="Village" required />
-          <input type="text" id="para" placeholder="Para / Lane" required />
-          <input type="text" id="city" placeholder="City" required />
-          <input type="text" id="pin" placeholder="PIN Code" required />
-          <input type="text" id="state" placeholder="State" required />
-          <input type="text" id="landmark" placeholder="Landmark (optional)" />
-          <div class="btn-group">
-            <button type="submit">💾 Save Changes</button>
-            <button type="button" id="cancelEditBtn">Cancel</button>
-          </div>
-        </form>
       </div>
+
+      <!-- ✏️ Editable Profile Form -->
+      <form id="profileForm" class="hidden">
+        <input type="text" id="name" placeholder="Full Name" required />
+        <input type="tel" id="phone" placeholder="Phone Number" required />
+        <input type="text" id="village" placeholder="Village" required />
+        <input type="text" id="para" placeholder="Para / Lane" required />
+        <input type="text" id="city" placeholder="City" required />
+        <input type="text" id="pin" placeholder="PIN Code" required />
+        <input type="text" id="state" placeholder="State" required />
+        <input type="text" id="landmark" placeholder="Landmark (optional)" />
+        <div class="btn-group">
+          <button type="submit">💾 Save Changes</button>
+          <button type="button" id="cancelEditBtn">Cancel</button>
+        </div>
+      </form>
     </main>
   </div>
 
-  <!-- Firebase Config -->
+  <!-- 🔌 Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
 
-  <!-- Main Script -->
+  <!-- 🚀 Script -->
   <script type="module">
     import { auth, db } from './firebase-config.js';
     import {
@@ -79,12 +70,9 @@
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
-      doc,
-      setDoc,
-      getDoc
+      doc, setDoc, getDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Inject header
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
@@ -92,20 +80,21 @@
         document.getElementById("pageWrapper").style.display = "block";
       });
 
+    const authForm = document.getElementById("auth-form");
+    const profileSection = document.getElementById("profile-section");
+    const profileForm = document.getElementById("profileForm");
+
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
     const loginBtn = document.getElementById("loginBtn");
     const registerBtn = document.getElementById("registerBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
 
-    const authForm = document.getElementById("auth-form");
-    const profileSection = document.getElementById("profile-section");
-    const userEmailSpan = document.getElementById("userEmail");
+    const viewName = document.getElementById("viewName");
+    const viewPhone = document.getElementById("viewPhone");
+    const viewAddress = document.getElementById("viewAddress");
 
-    const profileForm = document.getElementById("profileForm");
     const nameInput = document.getElementById("name");
     const phoneInput = document.getElementById("phone");
-    const dobInput = document.getElementById("dob");
     const villageInput = document.getElementById("village");
     const paraInput = document.getElementById("para");
     const cityInput = document.getElementById("city");
@@ -113,53 +102,32 @@
     const stateInput = document.getElementById("state");
     const landmarkInput = document.getElementById("landmark");
 
-    const profileView = document.getElementById("profileView");
-    const viewName = document.getElementById("viewName");
-    const viewPhone = document.getElementById("viewPhone");
-    const viewDOB = document.getElementById("viewDOB");
-    const viewAddress = document.getElementById("viewAddress");
-
     const editBtn = document.getElementById("editBtn");
     const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-    // Register
     registerBtn.addEventListener("click", async () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
-      if (!email || !password) {
-        alert("Enter both email and password.");
-        return;
-      }
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert("✅ Registered! Please complete your profile.");
+        await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+        alert("Registered successfully!");
       } catch (err) {
-        alert("❌ " + err.message);
+        alert(err.message);
       }
     });
 
-    // Login
     loginBtn.addEventListener("click", async () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
-      if (!email || !password) {
-        alert("Enter both email and password.");
-        return;
-      }
       try {
-        await signInWithEmailAndPassword(auth, email, password);
-        alert("✅ Login successful!");
+        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
       } catch (err) {
-        alert("❌ " + err.message);
+        alert(err.message);
       }
     });
 
-    // Logout
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-    });
+    logoutBtn.addEventListener("click", () => signOut(auth));
 
-    // Save Profile
+    editBtn.addEventListener("click", () => toggleEditMode(true));
+    cancelEditBtn.addEventListener("click", () => toggleEditMode(false));
+
     profileForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const user = auth.currentUser;
@@ -168,9 +136,7 @@
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, {
         name: nameInput.value,
-        email: user.email,
         phone: phoneInput.value,
-        dob: dobInput.value,
         address: {
           village: villageInput.value,
           para: paraInput.value,
@@ -181,48 +147,41 @@
         }
       });
 
-      alert("✅ Profile saved!");
-      toggleProfileView(true);
-      loadProfileView(user.uid);
+      alert("Profile updated!");
+      toggleEditMode(false);
+      loadProfile(user.uid);
     });
 
-    // Edit and Cancel buttons
-    editBtn.addEventListener("click", () => toggleProfileView(false));
-    cancelEditBtn.addEventListener("click", () => toggleProfileView(true));
-
-    function toggleProfileView(viewOnly) {
-      if (viewOnly) {
-        profileView.classList.remove("hidden");
-        profileForm.classList.add("hidden");
-      } else {
-        profileView.classList.add("hidden");
-        profileForm.classList.remove("hidden");
-      }
-    }
-
-    // Auth Listener
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         authForm.style.display = "none";
         profileSection.classList.remove("hidden");
-        userEmailSpan.textContent = user.email;
         await loadProfile(user.uid);
-        toggleProfileView(true);
       } else {
         authForm.style.display = "block";
         profileSection.classList.add("hidden");
+        profileForm.classList.add("hidden");
       }
     });
 
+    function toggleEditMode(showForm) {
+      if (showForm) {
+        profileForm.classList.remove("hidden");
+        profileSection.classList.add("hidden");
+      } else {
+        profileForm.classList.add("hidden");
+        profileSection.classList.remove("hidden");
+      }
+    }
+
     async function loadProfile(uid) {
       const userRef = doc(db, "users", uid);
-      const snap = await getDoc(userRef);
-      if (!snap.exists()) return;
+      const docSnap = await getDoc(userRef);
+      if (!docSnap.exists()) return;
 
-      const data = snap.data();
+      const data = docSnap.data();
       nameInput.value = data.name || "";
       phoneInput.value = data.phone || "";
-      dobInput.value = data.dob || "";
       villageInput.value = data.address?.village || "";
       paraInput.value = data.address?.para || "";
       cityInput.value = data.address?.city || "";
@@ -230,13 +189,10 @@
       stateInput.value = data.address?.state || "";
       landmarkInput.value = data.address?.landmark || "";
 
-      // Fill view-only section
       viewName.textContent = data.name || "-";
       viewPhone.textContent = data.phone || "-";
-      viewDOB.textContent = data.dob || "-";
-      viewAddress.textContent =
-        `Village: ${villageInput.value}, Para: ${paraInput.value}, City: ${cityInput.value}, PIN: ${pinInput.value}, State: ${stateInput.value}, Landmark: ${landmarkInput.value}`;
+      viewAddress.textContent = `Village: ${villageInput.value}, Para: ${paraInput.value}, City: ${cityInput.value}, PIN: ${pinInput.value}, ${stateInput.value}, Landmark: ${landmarkInput.value}`;
     }
   </script>
 </body>
-</html>
+  </html>
