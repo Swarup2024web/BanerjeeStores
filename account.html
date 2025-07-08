@@ -8,18 +8,14 @@
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
   <style>
-    /* Hide body content until header is loaded */
     #pageWrapper { display: none; }
   </style>
 </head>
 <body>
 
-  <!-- 🔗 Header container -->
   <div id="header-container"></div>
 
-  <!-- 📦 Main page content, hidden until header is loaded -->
   <div id="pageWrapper">
-
     <main class="account-container">
       <h2>👤 My Account</h2>
 
@@ -59,13 +55,10 @@
         </div>
       </div>
     </main>
-
   </div>
 
-  <!-- Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
 
-  <!-- Account Script -->
   <script type="module">
     import { auth, db } from './firebase-config.js';
     import {
@@ -80,7 +73,6 @@
       getDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Inject header and THEN show page
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
@@ -111,21 +103,49 @@
 
     // Register
     registerBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        alert("Please enter both email and password.");
+        return;
+      }
+
       try {
-        const userCred = await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-        alert("Registration successful! Now fill your profile.");
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("✅ Registration successful! Please fill your profile.");
       } catch (err) {
-        alert("Registration failed: " + err.message);
+        if (err.code === "auth/email-already-in-use") {
+          alert("❌ Email already registered. Try logging in.");
+        } else if (err.code === "auth/weak-password") {
+          alert("❌ Password should be at least 6 characters.");
+        } else {
+          alert("❌ Registration error: " + err.message);
+        }
       }
     });
 
     // Login
     loginBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        alert("Please enter both email and password.");
+        return;
+      }
+
       try {
-        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-        alert("Login successful!");
+        await signInWithEmailAndPassword(auth, email, password);
+        alert("✅ Login successful!");
       } catch (err) {
-        alert("Login failed: " + err.message);
+        if (err.code === "auth/user-not-found") {
+          alert("❌ User not found. Please register.");
+        } else if (err.code === "auth/wrong-password") {
+          alert("❌ Incorrect password.");
+        } else {
+          alert("❌ Login failed: " + err.message);
+        }
       }
     });
 
@@ -154,10 +174,10 @@
           state: stateInput.value,
           landmark: landmarkInput.value
         },
-        createdAt: new Date().toISOString()
+        updatedAt: new Date().toISOString()
       });
 
-      alert("Profile saved!");
+      alert("✅ Profile saved!");
     });
 
     // Auth Listener
