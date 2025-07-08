@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders - Banerjee Stores</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    body { visibility: hidden; }
+  </style>
+</head>
+<body>
+
+  <!-- 🔗 Header -->
+  <div id="header-container"></div>
+
+  <!-- 📦 Orders -->
+  <main class="order-page">
+    <h2>🧾 My Orders</h2>
+    <div id="ordersContainer" class="orders-list">
+      <!-- Orders will load here -->
+    </div>
+  </main>
+
+  <!-- 🔌 Firebase -->
+  <script type="module" src="firebase-config.js"></script>
+
+  <!-- 🚀 Script -->
+  <script type="module">
+    import { auth, db } from "./firebase-config.js";
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      collection,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Inject header
+    fetch("header.html")
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById("header-container").innerHTML = data;
+      });
+
+    const ordersContainer = document.getElementById("ordersContainer");
+
+    function formatDate(timestamp) {
+      const date = timestamp.toDate();
+      return date.toLocaleString();
+    }
+
+    async function loadOrders(uid) {
+      const q = query(
+        collection(db, "orders"),
+        where("userId", "==", uid)
+      );
+      const snapshot = await getDocs(q);
+
+      ordersContainer.innerHTML = "";
+
+      if (snapshot.empty) {
+        ordersContainer.innerHTML = "<p>No orders found.</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const orderBox = document.createElement("div");
+        orderBox.className = "order-card";
+
+        const itemList = data.items.map(item => 
+          `<li>${item.name} (${item.unit}) × ${item.qty}</li>`).join("");
+
+        orderBox.innerHTML = `
+          <h3>🛒 Order ID: ${doc.id}</h3>
+          <ul>${itemList}</ul>
+          <p><strong>Total:</strong> ₹${data.total}</p>
+          <p><strong>Placed:</strong> ${formatDate(data.time)}</p>
+        `;
+
+        ordersContainer.appendChild(orderBox);
+      });
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadOrders(user.uid);
+      } else {
+        alert("Please login to view your orders.");
+        window.location.href = "auth.html";
+      }
+      document.body.style.visibility = "visible";
+    });
+  </script>
+
+</body>
+</html>
