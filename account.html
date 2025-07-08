@@ -6,59 +6,70 @@
   <title>My Account – Banerjee Stores</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-
-  <style>
-    #pageWrapper { display: none; }
-  </style>
+  <style>#pageWrapper { display: none; }</style>
 </head>
 <body>
 
+  <!-- 🔗 Injected Header -->
   <div id="header-container"></div>
 
+  <!-- 🔒 Account Page Content -->
   <div id="pageWrapper">
     <main class="account-container">
       <h2>👤 My Account</h2>
 
-      <div id="auth-section">
-        <!-- Login/Register Form -->
-        <div id="auth-form">
-          <input type="email" id="email" placeholder="Email" required />
-          <input type="password" id="password" placeholder="Password" required />
-          <div class="btn-group">
-            <button id="loginBtn">Login</button>
-            <button id="registerBtn">Register</button>
-          </div>
+      <!-- 🔑 Login/Register Section -->
+      <div id="auth-form">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <div class="btn-group">
+          <button id="loginBtn">Login</button>
+          <button id="registerBtn">Register</button>
         </div>
+      </div>
 
-        <!-- Profile Section -->
-        <div id="profile-section" class="hidden">
-          <p><strong>Logged in as:</strong> <span id="userEmail"></span></p>
-          <form id="profileForm">
-            <input type="text" id="name" placeholder="Full Name" required />
-            <input type="tel" id="phone" placeholder="Phone Number" required />
-            <input type="date" id="dob" placeholder="Date of Birth" />
+      <!-- 👤 Profile View Section -->
+      <div id="profile-section" class="hidden">
+        <p><strong>Logged in as:</strong> <span id="userEmail"></span></p>
 
-            <input type="text" id="village" placeholder="Village" required />
-            <input type="text" id="para" placeholder="Para / Lane" required />
-            <input type="text" id="city" placeholder="City" required />
-            <input type="text" id="pin" placeholder="PIN Code" required />
-            <input type="text" id="state" placeholder="State" required />
-            <input type="text" id="landmark" placeholder="Landmark (optional)" />
-
-            <button type="submit">💾 Save Profile</button>
-          </form>
-
-          <div class="account-links">
-            <a href="order.html">📦 My Orders</a>
+        <div id="profileView">
+          <p><strong>Name:</strong> <span id="viewName"></span></p>
+          <p><strong>Phone:</strong> <span id="viewPhone"></span></p>
+          <p><strong>Date of Birth:</strong> <span id="viewDOB"></span></p>
+          <p><strong>Address:</strong><br>
+            <span id="viewAddress"></span>
+          </p>
+          <div class="btn-group">
+            <button id="editBtn">✏️ Edit Profile</button>
+            <a href="order.html" class="btn-link">📦 My Orders</a>
             <button id="logoutBtn">Logout</button>
           </div>
         </div>
+
+        <!-- ✏️ Profile Edit Form -->
+        <form id="profileForm" class="hidden">
+          <input type="text" id="name" placeholder="Full Name" required />
+          <input type="tel" id="phone" placeholder="Phone Number" required />
+          <input type="date" id="dob" placeholder="Date of Birth" />
+          <input type="text" id="village" placeholder="Village" required />
+          <input type="text" id="para" placeholder="Para / Lane" required />
+          <input type="text" id="city" placeholder="City" required />
+          <input type="text" id="pin" placeholder="PIN Code" required />
+          <input type="text" id="state" placeholder="State" required />
+          <input type="text" id="landmark" placeholder="Landmark (optional)" />
+          <div class="btn-group">
+            <button type="submit">💾 Save Changes</button>
+            <button type="button" id="cancelEditBtn">Cancel</button>
+          </div>
+        </form>
       </div>
     </main>
   </div>
 
+  <!-- Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
 
+  <!-- Main Script -->
   <script type="module">
     import { auth, db } from './firebase-config.js';
     import {
@@ -73,6 +84,7 @@
       getDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    // Inject header
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
@@ -101,27 +113,28 @@
     const stateInput = document.getElementById("state");
     const landmarkInput = document.getElementById("landmark");
 
+    const profileView = document.getElementById("profileView");
+    const viewName = document.getElementById("viewName");
+    const viewPhone = document.getElementById("viewPhone");
+    const viewDOB = document.getElementById("viewDOB");
+    const viewAddress = document.getElementById("viewAddress");
+
+    const editBtn = document.getElementById("editBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+
     // Register
     registerBtn.addEventListener("click", async () => {
       const email = emailInput.value.trim();
       const password = passwordInput.value;
-
       if (!email || !password) {
-        alert("Please enter both email and password.");
+        alert("Enter both email and password.");
         return;
       }
-
       try {
         await createUserWithEmailAndPassword(auth, email, password);
-        alert("✅ Registration successful! Please fill your profile.");
+        alert("✅ Registered! Please complete your profile.");
       } catch (err) {
-        if (err.code === "auth/email-already-in-use") {
-          alert("❌ Email already registered. Try logging in.");
-        } else if (err.code === "auth/weak-password") {
-          alert("❌ Password should be at least 6 characters.");
-        } else {
-          alert("❌ Registration error: " + err.message);
-        }
+        alert("❌ " + err.message);
       }
     });
 
@@ -129,23 +142,15 @@
     loginBtn.addEventListener("click", async () => {
       const email = emailInput.value.trim();
       const password = passwordInput.value;
-
       if (!email || !password) {
-        alert("Please enter both email and password.");
+        alert("Enter both email and password.");
         return;
       }
-
       try {
         await signInWithEmailAndPassword(auth, email, password);
         alert("✅ Login successful!");
       } catch (err) {
-        if (err.code === "auth/user-not-found") {
-          alert("❌ User not found. Please register.");
-        } else if (err.code === "auth/wrong-password") {
-          alert("❌ Incorrect password.");
-        } else {
-          alert("❌ Login failed: " + err.message);
-        }
+        alert("❌ " + err.message);
       }
     });
 
@@ -154,7 +159,7 @@
       await signOut(auth);
     });
 
-    // Save Profile to Firestore
+    // Save Profile
     profileForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const user = auth.currentUser;
@@ -173,12 +178,27 @@
           pin: pinInput.value,
           state: stateInput.value,
           landmark: landmarkInput.value
-        },
-        updatedAt: new Date().toISOString()
+        }
       });
 
       alert("✅ Profile saved!");
+      toggleProfileView(true);
+      loadProfileView(user.uid);
     });
+
+    // Edit and Cancel buttons
+    editBtn.addEventListener("click", () => toggleProfileView(false));
+    cancelEditBtn.addEventListener("click", () => toggleProfileView(true));
+
+    function toggleProfileView(viewOnly) {
+      if (viewOnly) {
+        profileView.classList.remove("hidden");
+        profileForm.classList.add("hidden");
+      } else {
+        profileView.classList.add("hidden");
+        profileForm.classList.remove("hidden");
+      }
+    }
 
     // Auth Listener
     onAuthStateChanged(auth, async (user) => {
@@ -186,26 +206,37 @@
         authForm.style.display = "none";
         profileSection.classList.remove("hidden");
         userEmailSpan.textContent = user.email;
-
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          const data = userSnap.data();
-          nameInput.value = data.name || "";
-          phoneInput.value = data.phone || "";
-          dobInput.value = data.dob || "";
-          villageInput.value = data.address?.village || "";
-          paraInput.value = data.address?.para || "";
-          cityInput.value = data.address?.city || "";
-          pinInput.value = data.address?.pin || "";
-          stateInput.value = data.address?.state || "";
-          landmarkInput.value = data.address?.landmark || "";
-        }
+        await loadProfile(user.uid);
+        toggleProfileView(true);
       } else {
         authForm.style.display = "block";
         profileSection.classList.add("hidden");
       }
     });
+
+    async function loadProfile(uid) {
+      const userRef = doc(db, "users", uid);
+      const snap = await getDoc(userRef);
+      if (!snap.exists()) return;
+
+      const data = snap.data();
+      nameInput.value = data.name || "";
+      phoneInput.value = data.phone || "";
+      dobInput.value = data.dob || "";
+      villageInput.value = data.address?.village || "";
+      paraInput.value = data.address?.para || "";
+      cityInput.value = data.address?.city || "";
+      pinInput.value = data.address?.pin || "";
+      stateInput.value = data.address?.state || "";
+      landmarkInput.value = data.address?.landmark || "";
+
+      // Fill view-only section
+      viewName.textContent = data.name || "-";
+      viewPhone.textContent = data.phone || "-";
+      viewDOB.textContent = data.dob || "-";
+      viewAddress.textContent =
+        `Village: ${villageInput.value}, Para: ${paraInput.value}, City: ${cityInput.value}, PIN: ${pinInput.value}, State: ${stateInput.value}, Landmark: ${landmarkInput.value}`;
+    }
   </script>
 </body>
 </html>
