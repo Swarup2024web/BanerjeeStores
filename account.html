@@ -3,14 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Account - Banerjee Stores</title>
+  <title>My Account - Banerjee Stores</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-
-  <!-- Prevent flicker before auth is checked -->
   <style>
     body { visibility: hidden; }
-    #pageWrapper { display: none; }
   </style>
 </head>
 <body>
@@ -18,190 +15,143 @@
   <!-- 🔗 Header -->
   <div id="header-container"></div>
 
-  <!-- 👤 Account Wrapper -->
-  <div id="pageWrapper">
-    <main class="account-container">
-      
-      <!-- 🔐 Login/Register -->
-      <div id="auth-form">
-        <input type="email" id="email" placeholder="Email" required />
-        <input type="password" id="password" placeholder="Password" required />
-        <div class="btn-group">
-          <button id="loginBtn">Login</button>
-          <button id="registerBtn">Register</button>
-        </div>
-      </div>
+  <!-- 👤 Account Section -->
+  <main class="account-container">
+    <!-- View Profile -->
+    <div class="account-card" id="profileView">
+      <h2>👋 Welcome back, <span id="profileName">User</span>!</h2>
+      <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+      <p><strong>Phone:</strong> <span id="profilePhone"></span></p>
+      <p><strong>Address:</strong> <span id="profileAddress"></span></p>
+      <p><strong>PIN:</strong> <span id="profilePIN"></span></p>
+      <p><strong>Landmark:</strong> <span id="profileLandmark"></span></p>
 
-      <!-- ✅ Logged In View -->
-      <div id="profile-section" class="hidden">
-        <h2>Welcome back, <span id="viewName"></span> 👋</h2>
-        <p><strong>📍 Address:</strong> <span id="viewAddress"></span></p>
-        <p><strong>📞 Phone:</strong> <span id="viewPhone"></span></p>
-        <div class="btn-group">
-          <button id="editBtn">✏️ Edit Profile</button>
-          <a href="order.html" class="btn-link">📦 My Orders</a>
-          <button id="logoutBtn">🔓 Logout</button>
-        </div>
+      <div class="btn-group">
+        <button id="editProfileBtn">Edit Profile</button>
+        <button onclick="window.location.href='order.html'">My Orders</button>
+        <button id="logoutBtn">Logout</button>
       </div>
+    </div>
 
-      <!-- 📝 Edit Profile Form -->
-      <form id="profileForm" class="hidden">
-        <input type="text" id="name" placeholder="Full Name" required />
-        <input type="tel" id="phone" placeholder="Phone Number" required />
-        <input type="text" id="village" placeholder="Village" required />
-        <input type="text" id="para" placeholder="Para / Lane" required />
-        <input type="text" id="city" placeholder="City" required />
-        <input type="text" id="pin" placeholder="PIN Code" required />
-        <input type="text" id="state" placeholder="State" required />
-        <input type="text" id="landmark" placeholder="Landmark (optional)" />
-        <div class="btn-group">
-          <button type="submit">💾 Save Changes</button>
-          <button type="button" id="cancelEditBtn">Cancel</button>
-        </div>
-      </form>
-    </main>
-  </div>
+    <!-- Edit Form -->
+    <div class="account-card hidden" id="editForm">
+      <h2>📝 Edit Profile</h2>
+      <input type="text" id="editName" placeholder="Full Name" />
+      <input type="text" id="editPhone" placeholder="Phone Number" />
+      <input type="text" id="editVillage" placeholder="Village" />
+      <input type="text" id="editPara" placeholder="Para" />
+      <input type="text" id="editCity" placeholder="City" />
+      <input type="text" id="editPIN" placeholder="PIN Code" />
+      <input type="text" id="editLandmark" placeholder="Landmark" />
+      <div class="btn-group">
+        <button id="saveProfile">Save</button>
+        <button id="cancelEdit">Cancel</button>
+      </div>
+    </div>
+  </main>
 
   <!-- 🔌 Firebase -->
   <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="script.js"></script>
 
-  <!-- 🚀 Script -->
+  <!-- 👤 Account Script -->
   <script type="module">
     import { auth, db } from './firebase-config.js';
     import {
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged
+      onAuthStateChanged,
+      signOut
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
-      doc, setDoc, getDoc
+      doc, getDoc, setDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Load Header
-    fetch("header.html")
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById("header-container").innerHTML = data;
-        document.getElementById("pageWrapper").style.display = "block";
-      });
+    const profileView = document.getElementById("profileView");
+    const editForm = document.getElementById("editForm");
 
-    const authForm = document.getElementById("auth-form");
-    const profileSection = document.getElementById("profile-section");
-    const profileForm = document.getElementById("profileForm");
+    const profileName = document.getElementById("profileName");
+    const profileEmail = document.getElementById("profileEmail");
+    const profilePhone = document.getElementById("profilePhone");
+    const profileAddress = document.getElementById("profileAddress");
+    const profilePIN = document.getElementById("profilePIN");
+    const profileLandmark = document.getElementById("profileLandmark");
 
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const loginBtn = document.getElementById("loginBtn");
-    const registerBtn = document.getElementById("registerBtn");
+    const editName = document.getElementById("editName");
+    const editPhone = document.getElementById("editPhone");
+    const editVillage = document.getElementById("editVillage");
+    const editPara = document.getElementById("editPara");
+    const editCity = document.getElementById("editCity");
+    const editPIN = document.getElementById("editPIN");
+    const editLandmark = document.getElementById("editLandmark");
 
-    const viewName = document.getElementById("viewName");
-    const viewPhone = document.getElementById("viewPhone");
-    const viewAddress = document.getElementById("viewAddress");
-
-    const nameInput = document.getElementById("name");
-    const phoneInput = document.getElementById("phone");
-    const villageInput = document.getElementById("village");
-    const paraInput = document.getElementById("para");
-    const cityInput = document.getElementById("city");
-    const pinInput = document.getElementById("pin");
-    const stateInput = document.getElementById("state");
-    const landmarkInput = document.getElementById("landmark");
-
-    const editBtn = document.getElementById("editBtn");
-    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const editProfileBtn = document.getElementById("editProfileBtn");
+    const saveProfile = document.getElementById("saveProfile");
+    const cancelEdit = document.getElementById("cancelEdit");
     const logoutBtn = document.getElementById("logoutBtn");
 
-    // Register
-    registerBtn.addEventListener("click", async () => {
-      try {
-        await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-        alert("Registered successfully!");
-      } catch (err) {
-        alert(err.message);
-      }
-    });
-
-    // Login
-    loginBtn.addEventListener("click", async () => {
-      try {
-        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-      } catch (err) {
-        alert(err.message);
-      }
-    });
-
-    // Logout
-    logoutBtn.addEventListener("click", () => signOut(auth));
-
-    // Toggle Edit
-    editBtn.addEventListener("click", () => toggleEditMode(true));
-    cancelEditBtn.addEventListener("click", () => toggleEditMode(false));
-
-    profileForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const userRef = doc(db, "users", user.uid);
-      await setDoc(userRef, {
-        name: nameInput.value,
-        phone: phoneInput.value,
-        address: {
-          village: villageInput.value,
-          para: paraInput.value,
-          city: cityInput.value,
-          pin: pinInput.value,
-          state: stateInput.value,
-          landmark: landmarkInput.value
-        }
-      });
-
-      alert("Profile updated!");
-      toggleEditMode(false);
-      loadProfile(user.uid);
-    });
-
-    function toggleEditMode(show) {
-      profileForm.classList.toggle("hidden", !show);
-      profileSection.classList.toggle("hidden", show);
-    }
-
-    async function loadProfile(uid) {
-      const userRef = doc(db, "users", uid);
-      const snap = await getDoc(userRef);
-      if (!snap.exists()) return;
-
-      const data = snap.data();
-
-      nameInput.value = data.name || "";
-      phoneInput.value = data.phone || "";
-      villageInput.value = data.address?.village || "";
-      paraInput.value = data.address?.para || "";
-      cityInput.value = data.address?.city || "";
-      pinInput.value = data.address?.pin || "";
-      stateInput.value = data.address?.state || "";
-      landmarkInput.value = data.address?.landmark || "";
-
-      viewName.textContent = data.name || "-";
-      viewPhone.textContent = data.phone || "-";
-      viewAddress.textContent = `Village: ${villageInput.value}, Para: ${paraInput.value}, City: ${cityInput.value}, PIN: ${pinInput.value}, ${stateInput.value}, Landmark: ${landmarkInput.value}`;
-    }
+    let userId = "";
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        authForm.style.display = "none";
-        profileSection.classList.remove("hidden");
-        await loadProfile(user.uid);
+        userId = user.uid;
+        const userDoc = await getDoc(doc(db, "users", userId));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          profileName.textContent = data.name || "User";
+          profileEmail.textContent = user.email;
+          profilePhone.textContent = data.phone || "";
+          profileAddress.textContent =
+            `Village - ${data.village || ""}, Para - ${data.para || ""}, City - ${data.city || ""}`;
+          profilePIN.textContent = data.pin || "";
+          profileLandmark.textContent = data.landmark || "";
+        }
+        document.body.style.visibility = "visible";
       } else {
-        authForm.style.display = "block";
-        profileSection.classList.add("hidden");
-        profileForm.classList.add("hidden");
+        window.location.href = "auth.html";
       }
+    });
 
-      document.body.style.visibility = "visible";
+    editProfileBtn.addEventListener("click", async () => {
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        editName.value = data.name || "";
+        editPhone.value = data.phone || "";
+        editVillage.value = data.village || "";
+        editPara.value = data.para || "";
+        editCity.value = data.city || "";
+        editPIN.value = data.pin || "";
+        editLandmark.value = data.landmark || "";
+      }
+      profileView.classList.add("hidden");
+      editForm.classList.remove("hidden");
+    });
+
+    cancelEdit.addEventListener("click", () => {
+      profileView.classList.remove("hidden");
+      editForm.classList.add("hidden");
+    });
+
+    saveProfile.addEventListener("click", async () => {
+      const updatedData = {
+        name: editName.value,
+        phone: editPhone.value,
+        village: editVillage.value,
+        para: editPara.value,
+        city: editCity.value,
+        pin: editPIN.value,
+        landmark: editLandmark.value
+      };
+      await setDoc(doc(db, "users", userId), updatedData);
+      alert("Profile updated!");
+      location.reload();
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "auth.html";
+      });
     });
   </script>
 
 </body>
-</html>
+  </html>
