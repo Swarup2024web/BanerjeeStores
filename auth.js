@@ -7,54 +7,54 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Elements
-const emailInput = document.getElementById('email');
-const passInput = document.getElementById('password');
-const msg = document.getElementById('auth-message');
-const logoutBtn = document.getElementById('logout-btn');
+// DOM Elements
+const authForm = document.getElementById("authForm");
+const authStatus = document.getElementById("authStatus");
 
-// Register
-window.register = async function () {
-  const email = emailInput.value;
-  const password = passInput.value;
+const email = document.getElementById("authEmail");
+const password = document.getElementById("authPassword");
 
+const loginBtn = document.getElementById("loginUser");
+const registerBtn = document.getElementById("registerUser");
+const logoutBtn = document.getElementById("logoutUser");
+const goToAccount = document.getElementById("goToAccount");
+
+// Login User
+loginBtn.addEventListener("click", async () => {
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    msg.textContent = "✅ Registered Successfully!";
-    msg.style.color = 'green';
-  } catch (error) {
-    msg.textContent = "❌ " + error.message;
-    msg.style.color = 'red';
+    await signInWithEmailAndPassword(auth, email.value, password.value);
+  } catch (err) {
+    alert(err.message);
   }
-}
+});
 
-// Login
-window.login = async function () {
-  const email = emailInput.value;
-  const password = passInput.value;
-
+// Register User
+registerBtn.addEventListener("click", async () => {
   try {
-    await signInWithEmailAndPassword(auth, email, password);
-    msg.textContent = "✅ Logged In!";
-    msg.style.color = 'green';
-  } catch (error) {
-    msg.textContent = "❌ " + error.message;
-    msg.style.color = 'red';
+    await createUserWithEmailAndPassword(auth, email.value, password.value);
+    alert("Registration successful!");
+  } catch (err) {
+    alert(err.message);
   }
-}
+});
 
 // Logout
-window.logout = async function () {
-  await signOut(auth);
-}
+logoutBtn.addEventListener("click", () => signOut(auth));
 
-// Detect Login Status
-onAuthStateChanged(auth, user => {
+// Go to Account Page
+goToAccount.addEventListener("click", () => {
+  window.location.href = "account.html";
+});
+
+// Auth State Change
+onAuthStateChanged(auth, (user) => {
   if (user) {
-    msg.textContent = `🔓 Logged in as ${user.email}`;
-    logoutBtn.style.display = 'inline-block';
+    authForm.classList.add("hidden");
+    authStatus.classList.remove("hidden");
   } else {
-    msg.textContent = '🔒 Not logged in';
-    logoutBtn.style.display = 'none';
+    authForm.classList.remove("hidden");
+    authStatus.classList.add("hidden");
   }
+
+  document.body.style.visibility = "visible"; // Prevent flicker
 });
