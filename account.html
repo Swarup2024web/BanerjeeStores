@@ -6,18 +6,23 @@
   <title>Account – Banerjee Stores</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <style>#pageWrapper { display: none; }</style>
+
+  <!-- 🛡️ Hide until auth is verified -->
+  <style>
+    body { visibility: hidden; }
+    #pageWrapper { display: none; }
+  </style>
 </head>
 <body>
 
   <!-- 🔗 Header -->
   <div id="header-container"></div>
 
-  <!-- 🔐 Account Section -->
+  <!-- 🧾 Page Wrapper -->
   <div id="pageWrapper">
     <main class="account-container">
       
-      <!-- 🧾 Login/Register Form (only if not logged in) -->
+      <!-- 🔐 Login/Register -->
       <div id="auth-form">
         <input type="email" id="email" placeholder="Email" required />
         <input type="password" id="password" placeholder="Password" required />
@@ -39,7 +44,7 @@
         </div>
       </div>
 
-      <!-- ✏️ Editable Profile Form -->
+      <!-- 📝 Edit Form -->
       <form id="profileForm" class="hidden">
         <input type="text" id="name" placeholder="Full Name" required />
         <input type="tel" id="phone" placeholder="Phone Number" required />
@@ -60,7 +65,7 @@
   <!-- 🔌 Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
 
-  <!-- 🚀 Script -->
+  <!-- 🚀 Account Script -->
   <script type="module">
     import { auth, db } from './firebase-config.js';
     import {
@@ -73,6 +78,7 @@
       doc, setDoc, getDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    // ⬇️ Inject header first
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
@@ -80,6 +86,7 @@
         document.getElementById("pageWrapper").style.display = "block";
       });
 
+    // 🔗 Elements
     const authForm = document.getElementById("auth-form");
     const profileSection = document.getElementById("profile-section");
     const profileForm = document.getElementById("profileForm");
@@ -106,6 +113,7 @@
     const cancelEditBtn = document.getElementById("cancelEditBtn");
     const logoutBtn = document.getElementById("logoutBtn");
 
+    // 📝 Register
     registerBtn.addEventListener("click", async () => {
       try {
         await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
@@ -115,6 +123,7 @@
       }
     });
 
+    // 🔓 Login
     loginBtn.addEventListener("click", async () => {
       try {
         await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
@@ -123,11 +132,14 @@
       }
     });
 
+    // 🔒 Logout
     logoutBtn.addEventListener("click", () => signOut(auth));
 
+    // 🔁 Toggle
     editBtn.addEventListener("click", () => toggleEditMode(true));
     cancelEditBtn.addEventListener("click", () => toggleEditMode(false));
 
+    // 💾 Submit Profile Update
     profileForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const user = auth.currentUser;
@@ -152,6 +164,13 @@
       loadProfile(user.uid);
     });
 
+    // 👁️ Toggle Edit/View
+    function toggleEditMode(showForm) {
+      profileForm.classList.toggle("hidden", !showForm);
+      profileSection.classList.toggle("hidden", showForm);
+    }
+
+    // 🔁 Auth State Listener (fixed glitch)
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         authForm.style.display = "none";
@@ -162,24 +181,19 @@
         profileSection.classList.add("hidden");
         profileForm.classList.add("hidden");
       }
+
+      // ✅ Show page only after auth check is complete
+      document.body.style.visibility = "visible";
     });
 
-    function toggleEditMode(showForm) {
-      if (showForm) {
-        profileForm.classList.remove("hidden");
-        profileSection.classList.add("hidden");
-      } else {
-        profileForm.classList.add("hidden");
-        profileSection.classList.remove("hidden");
-      }
-    }
-
+    // 📥 Load Profile
     async function loadProfile(uid) {
       const userRef = doc(db, "users", uid);
       const docSnap = await getDoc(userRef);
       if (!docSnap.exists()) return;
 
       const data = docSnap.data();
+
       nameInput.value = data.name || "";
       phoneInput.value = data.phone || "";
       villageInput.value = data.address?.village || "";
@@ -194,5 +208,6 @@
       viewAddress.textContent = `Village: ${villageInput.value}, Para: ${paraInput.value}, City: ${cityInput.value}, PIN: ${pinInput.value}, ${stateInput.value}, Landmark: ${landmarkInput.value}`;
     }
   </script>
+
 </body>
   </html>
