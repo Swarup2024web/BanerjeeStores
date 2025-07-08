@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Banerjee Stores</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -14,12 +14,12 @@
 
   <!-- 🧭 Category Bar -->
   <div class="category-bar" id="categoryBar">
-    <!-- Categories dynamically inserted here -->
+    <!-- Dynamic buttons will be injected here -->
   </div>
 
   <!-- 🛍️ Products Section -->
   <section class="products-section" id="productList">
-    <!-- Product cards injected here -->
+    <!-- Products dynamically injected here -->
   </section>
 
   <!-- 🔌 Firebase Config -->
@@ -34,7 +34,7 @@
       query
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Inject header
+    // Inject header.html
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
@@ -43,10 +43,9 @@
 
     const productList = document.getElementById("productList");
     const categoryBar = document.getElementById("categoryBar");
-
     let allProducts = [];
 
-    // Fetch products from Firebase
+    // Fetch products
     async function fetchProducts() {
       const q = query(collection(db, "products"));
       const snapshot = await getDocs(q);
@@ -69,7 +68,7 @@
       productList.innerHTML = "";
 
       if (products.length === 0) {
-        productList.innerHTML = "<p>No products available.</p>";
+        productList.innerHTML = "<p>No products found.</p>";
         return;
       }
 
@@ -113,7 +112,7 @@
       });
     }
 
-    // Initial load
+    // Initial fetch
     fetchProducts();
   </script>
 
