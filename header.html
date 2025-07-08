@@ -1,18 +1,18 @@
-<header class="modern-header">
-  <!-- 🔹 Row 1: Logo + Website Name -->
+<header class="site-header">
+  <!-- Row 1: Logo + Name -->
   <div class="header-top">
-    <img src="assets/logo.png" alt="Logo" class="logo" />
-    <h1 class="brand-name">Banerjee Stores</h1>
+    <img src="https://raw.githubusercontent.com/Swarup2024web/banerjee-stores/main/assets/logo.png" alt="Logo" class="logo" />
+    <h1 class="site-title">Banerjee Stores</h1>
   </div>
 
-  <!-- 🔹 Row 2: Navigation -->
+  <!-- Row 2: Navigation -->
   <nav class="nav-bar">
     <a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Home</a>
     <a href="cart.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Cart</a>
     <a href="account.html" class="nav-link"><i class="fas fa-user-circle"></i> Account</a>
   </nav>
 
-  <!-- 🔹 Row 3: Search Box -->
+  <!-- Row 3: Search Bar -->
   <div class="search-row">
     <input type="text" placeholder="Search products..." class="search-input" />
     <button class="search-btn"><i class="fas fa-search"></i></button>
@@ -20,13 +20,11 @@
 </header>
 
 <style>
-/* 🔷 Base Header Styling */
-.modern-header {
-  width: 100%;
-  margin: 0 auto;
+/* ✅ Header Container */
+.site-header {
   background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.1), -4px -4px 12px #ffffff;
   border-radius: 0 0 20px 20px;
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.1), -4px -4px 12px #ffffff;
   padding: 1rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -34,7 +32,7 @@
   gap: 1rem;
 }
 
-/* 🔹 Row 1: Logo + Name */
+/* 🔹 Row 1: Logo and Name Side by Side */
 .header-top {
   display: flex;
   align-items: center;
@@ -48,52 +46,51 @@
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.brand-name {
+.site-title {
   font-size: 1.6rem;
   font-weight: bold;
   color: #006064;
+  margin: 0;
 }
 
-/* 🔹 Row 2: Nav Links in One Line */
+/* 🔹 Row 2: Nav Bar */
 .nav-bar {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-  width: 100%;
   flex-wrap: nowrap;
+  width: 100%;
   overflow-x: auto;
 }
 
 .nav-link {
   text-decoration: none;
-  padding: 0.5rem 1rem;
   font-weight: 500;
-  font-size: 1rem;
-  border-radius: 20px;
   color: #00796b;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
   background: linear-gradient(145deg, #b2ebf2, #e0f7fa);
-  box-shadow: inset 2px 2px 6px #a0dede, inset -2px -2px 6px #ffffff;
-  transition: 0.3s;
+  box-shadow: inset 2px 2px 5px #a0dede, inset -2px -2px 5px #ffffff;
+  transition: 0.3s ease;
   white-space: nowrap;
 }
 
 .nav-link:hover {
-  background: #00acc1;
-  color: #fff;
+  background: #00bcd4;
+  color: white;
 }
 
 .nav-link.active {
   background: #00796b;
   color: white;
-  font-weight: bold;
 }
 
-/* 🔹 Row 3: Search */
+/* 🔹 Row 3: Search Bar (No Underline) */
 .search-row {
   display: flex;
-  gap: 0.5rem;
   width: 100%;
   max-width: 400px;
+  gap: 0.5rem;
 }
 
 .search-input {
@@ -101,7 +98,7 @@
   padding: 0.5rem 1rem;
   font-size: 1rem;
   border-radius: 20px;
-  border: 1px solid #b2ebf2;
+  border: none; /* ✅ Removed border/underline */
   box-shadow: inset 2px 2px 5px #cceef2, inset -2px -2px 5px #ffffff;
   background-color: #ffffff;
   outline: none;
@@ -123,21 +120,21 @@
   background: #00838f;
 }
 
-/* 🔸 Mobile Responsiveness */
+/* 🔸 Responsive Layout */
 @media (max-width: 600px) {
   .header-top {
     flex-direction: column;
-    gap: 0.5rem;
+    text-align: center;
   }
 
   .search-row {
     flex-direction: column;
-    width: 100%;
+    gap: 0.4rem;
   }
 
   .nav-bar {
-    justify-content: space-evenly;
     flex-wrap: wrap;
+    justify-content: center;
   }
 }
-</style>
+  </style>
