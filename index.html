@@ -3,29 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Banerjee Stores</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Banerjee Stores - Products</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    body { visibility: hidden; }
+  </style>
 </head>
 <body>
 
-  <!-- 🔗 Injected Header -->
+  <!-- 🔗 Header -->
   <div id="header-container"></div>
 
   <!-- 🧭 Category Bar -->
   <div class="category-bar" id="categoryBar">
-    <!-- Categories will load here -->
+    <!-- Category buttons will be inserted here -->
   </div>
 
-  <!-- 🛍️ Products Section -->
+  <!-- 🛍️ Product Grid -->
   <section class="products-section" id="productList">
-    <!-- Skeletons / Products will load here -->
+    <!-- Product cards will be injected here -->
   </section>
 
-  <!-- 🔌 Firebase -->
+  <!-- 🔌 Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="script.js"></script>
 
-  <!-- 🚀 Script -->
+  <!-- 🚀 Product Logic -->
   <script type="module">
     import { db } from "./firebase-config.js";
     import {
@@ -34,46 +38,58 @@
       query
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Inject Header
-    fetch("header.html")
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById("header-container").innerHTML = data;
-      });
-
     const productList = document.getElementById("productList");
     const categoryBar = document.getElementById("categoryBar");
+
     let allProducts = [];
 
-    // 🦴 Show Skeletons
-    function showSkeletons() {
-      productList.innerHTML = "";
-      for (let i = 0; i < 6; i++) {
-        const skeleton = document.createElement("div");
-        skeleton.className = "skeleton-card";
-        skeleton.innerHTML = `
-          <div class="skeleton-img"></div>
-          <div class="skeleton-content">
-            <div class="skeleton-line" style="width: 60%"></div>
-            <div class="skeleton-line" style="width: 40%"></div>
-            <div class="skeleton-line" style="width: 80%"></div>
-            <div class="skeleton-line" style="width: 30%"></div>
-          </div>
-        `;
-        productList.appendChild(skeleton);
-      }
+    // Load Products from Firebase
+    async function fetchProducts() {
+      const q = query(collection(db, "products"));
+      const snapshot = await getDocs(q);
+      allProducts = [];
+      const categorySet = new Set();
+
+      snapshot.forEach((doc) => {
+        const product = doc.data();
+        allProducts.push(product);
+        categorySet.add(product.category);
+      });
+
+      renderCategories([...categorySet]);
+      renderProducts(allProducts); // Show all products initially
     }
 
-    // 🛒 Render Products
+    // Render Category Buttons
+    function renderCategories(categories) {
+      categoryBar.innerHTML = "";
+
+      const allBtn = document.createElement("button");
+      allBtn.textContent = "All";
+      allBtn.addEventListener("click", () => renderProducts(allProducts));
+      categoryBar.appendChild(allBtn);
+
+      categories.forEach((cat) => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        btn.addEventListener("click", () => {
+          const filtered = allProducts.filter(p => p.category === cat);
+          renderProducts(filtered);
+        });
+        categoryBar.appendChild(btn);
+      });
+    }
+
+    // Render Product Cards
     function renderProducts(products) {
       productList.innerHTML = "";
 
       if (products.length === 0) {
-        productList.innerHTML = "<p>No products available.</p>";
+        productList.innerHTML = "<p>No products found in this category.</p>";
         return;
       }
 
-      products.forEach((product) => {
+      products.forEach(product => {
         const card = document.createElement("div");
         card.className = "product-card";
         card.innerHTML = `
@@ -89,48 +105,6 @@
         `;
         productList.appendChild(card);
       });
-    }
-
-    // 🧭 Render Categories
-    function renderCategories(categories) {
-      categoryBar.innerHTML = "";
-
-      const allBtn = document.createElement("button");
-      allBtn.textContent = "All";
-      allBtn.dataset.category = "All";
-      allBtn.addEventListener("click", () => renderProducts(allProducts));
-      categoryBar.appendChild(allBtn);
-
-      categories.forEach((cat) => {
-        const btn = document.createElement("button");
-        btn.textContent = cat;
-        btn.dataset.category = cat;
-        btn.addEventListener("click", () => {
-          const filtered = allProducts.filter(p => p.category === cat);
-          renderProducts(filtered);
-        });
-        categoryBar.appendChild(btn);
-      });
-    }
-
-    // 📥 Fetch Products from Firestore
-    async function fetchProducts() {
-      showSkeletons(); // Show loading animation
-
-      const q = query(collection(db, "products"));
-      const querySnapshot = await getDocs(q);
-
-      allProducts = [];
-      let categorySet = new Set();
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        allProducts.push(data);
-        categorySet.add(data.category);
-      });
-
-      renderCategories([...categorySet]);
-      renderProducts(allProducts);
     }
 
     fetchProducts();
