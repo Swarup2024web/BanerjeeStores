@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Account – Banerjee Stores</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- 🔗 Header -->
+  <div id="header-container"></div>
+
+  <main class="account-container">
+    <h2>👤 My Account</h2>
+
+    <div id="auth-section">
+      <!-- Login/Register Form -->
+      <div id="auth-form">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <div class="btn-group">
+          <button id="loginBtn">Login</button>
+          <button id="registerBtn">Register</button>
+        </div>
+      </div>
+
+      <!-- Profile Section -->
+      <div id="profile-section" class="hidden">
+        <p><strong>Logged in as:</strong> <span id="userEmail"></span></p>
+        <form id="profileForm">
+          <input type="text" id="name" placeholder="Full Name" required />
+          <input type="tel" id="phone" placeholder="Phone Number" required />
+          <input type="date" id="dob" placeholder="Date of Birth" />
+
+          <input type="text" id="village" placeholder="Village" required />
+          <input type="text" id="para" placeholder="Para / Lane" required />
+          <input type="text" id="city" placeholder="City" required />
+          <input type="text" id="pin" placeholder="PIN Code" required />
+          <input type="text" id="state" placeholder="State" required />
+          <input type="text" id="landmark" placeholder="Landmark (optional)" />
+
+          <button type="submit">💾 Save Profile</button>
+        </form>
+
+        <div class="account-links">
+          <a href="order.html">📦 My Orders</a>
+          <button id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Firebase Config -->
+  <script type="module" src="firebase-config.js"></script>
+
+  <!-- Account Script -->
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import {
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      doc,
+      setDoc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Inject header
+    fetch("header.html")
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById("header-container").innerHTML = data;
+      });
+
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const authForm = document.getElementById("auth-form");
+    const profileSection = document.getElementById("profile-section");
+    const userEmailSpan = document.getElementById("userEmail");
+
+    const profileForm = document.getElementById("profileForm");
+    const nameInput = document.getElementById("name");
+    const phoneInput = document.getElementById("phone");
+    const dobInput = document.getElementById("dob");
+    const villageInput = document.getElementById("village");
+    const paraInput = document.getElementById("para");
+    const cityInput = document.getElementById("city");
+    const pinInput = document.getElementById("pin");
+    const stateInput = document.getElementById("state");
+    const landmarkInput = document.getElementById("landmark");
+
+    // Register
+    registerBtn.addEventListener("click", async () => {
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+        alert("Registration successful! Now fill your profile.");
+      } catch (err) {
+        alert("Registration failed: " + err.message);
+      }
+    });
+
+    // Login
+    loginBtn.addEventListener("click", async () => {
+      try {
+        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+        alert("Login successful!");
+      } catch (err) {
+        alert("Login failed: " + err.message);
+      }
+    });
+
+    // Logout
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+    });
+
+    // Save Profile to Firestore
+    profileForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const userRef = doc(db, "users", user.uid);
+      await setDoc(userRef, {
+        name: nameInput.value,
+        email: user.email,
+        phone: phoneInput.value,
+        dob: dobInput.value,
+        address: {
+          village: villageInput.value,
+          para: paraInput.value,
+          city: cityInput.value,
+          pin: pinInput.value,
+          state: stateInput.value,
+          landmark: landmarkInput.value
+        },
+        createdAt: new Date().toISOString()
+      });
+
+      alert("Profile saved!");
+    });
+
+    // Auth Listener
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        authForm.style.display = "none";
+        profileSection.classList.remove("hidden");
+        userEmailSpan.textContent = user.email;
+
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const data = userSnap.data();
+          nameInput.value = data.name || "";
+          phoneInput.value = data.phone || "";
+          dobInput.value = data.dob || "";
+          villageInput.value = data.address?.village || "";
+          paraInput.value = data.address?.para || "";
+          cityInput.value = data.address?.city || "";
+          pinInput.value = data.address?.pin || "";
+          stateInput.value = data.address?.state || "";
+          landmarkInput.value = data.address?.landmark || "";
+        }
+      } else {
+        authForm.style.display = "block";
+        profileSection.classList.add("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
