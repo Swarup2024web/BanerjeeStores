@@ -1,133 +1,25 @@
-<header class="site-header">
-  <!-- 🔹 Row 1: Logo + Name (Side-by-side always) -->
-  <div class="header-top">
-    <img src="assets/logo.png" alt="Logo" class="logo" />
-    <h1 class="site-title">Banerjee Stores</h1>
+<header>
+  <!-- 🔹 Row 1: Logo + Site Name -->
+  <div class="header-row logo">
+    <img src="assets/logo.png" alt="Banerjee Stores" class="logo-img" />
+    <span class="logo-text">Banerjee Stores</span>
   </div>
 
-  <!-- 🔹 Row 2: Navigation with Icons -->
-  <nav class="nav-bar">
-    <a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Home</a>
-    <a href="cart.html" class="nav-link"><i class="fas fa-shopping-cart"></i> Cart</a>
-    <a href="account.html" class="nav-link"><i class="fas fa-user-circle"></i> Account</a>
-  </nav>
+  <!-- 🔹 Row 2: Navigation Links -->
+  <div class="header-row navbar">
+    <a href="index.html" class="nav-link">
+      <i class="fas fa-home"></i> Home
+    </a>
+    <a href="cart.html" class="nav-link">
+      <i class="fas fa-shopping-cart"></i> Cart
+    </a>
+    <a href="account.html" class="nav-link">
+      <i class="fas fa-user"></i> Account
+    </a>
+  </div>
 
-  <!-- 🔹 Row 3: Search Bar Only (no icon) -->
-  <div class="search-row">
-    <input type="text" placeholder="Search products..." class="search-input" />
+  <!-- 🔹 Row 3: Search Bar -->
+  <div class="search-bar">
+    <input type="text" placeholder="Search for products..." />
   </div>
 </header>
-
-<style>
-/* 🌟 Modern Glassmorphic + Skeumorphic Header */
-.site-header {
-  background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-  border-radius: 0 0 20px 20px;
-  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.1), -4px -4px 12px #ffffff;
-  padding: 1rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  position: relative;
-  z-index: 1;
-}
-
-/* 🔹 Row 1: Logo + Name */
-.header-top {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: nowrap;
-}
-
-.logo {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.site-title {
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: #006064;
-  margin: 0;
-  white-space: nowrap;
-}
-
-/* 🔹 Row 2: Navigation */
-.nav-bar {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  width: 100%;
-  overflow-x: auto;
-  flex-wrap: nowrap;
-}
-
-.nav-link {
-  text-decoration: none;
-  font-weight: 500;
-  color: #00796b;
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  background: linear-gradient(145deg, #b2ebf2, #e0f7fa);
-  box-shadow: inset 2px 2px 5px #a0dede, inset -2px -2px 5px #ffffff;
-  transition: 0.3s ease;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.nav-link:hover {
-  background: #00bcd4;
-  color: white;
-}
-
-.nav-link.active {
-  background: #00796b;
-  color: white;
-  font-weight: bold;
-}
-
-/* 🔹 Row 3: Search Bar */
-.search-row {
-  display: flex;
-  width: 100%;
-  max-width: 400px;
-}
-
-.search-input {
-  flex: 1;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border-radius: 20px;
-  border: none;
-  box-shadow: inset 2px 2px 5px #cceef2, inset -2px -2px 5px #ffffff;
-  background-color: #ffffff;
-  outline: none;
-}
-
-/* 🔸 Responsive (but no collapsing) */
-@media (max-width: 600px) {
-  .header-top {
-    flex-direction: row;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .nav-bar {
-    justify-content: center;
-  }
-
-  .search-row {
-    width: 100%;
-  }
-}
-</style>
-
-<!-- Include Font Awesome Icons (only once in your main HTML) -->
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
