@@ -1,187 +1,299 @@
+<!-- 🛠️ Admin Dashboard: admin.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard - Banerjee Stores</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <title>Admin - Banerjee Stores</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    body { visibility: hidden; font-family: 'Segoe UI', sans-serif; background: linear-gradient(to right, #c2e9fb, #a1c4fd); color: #333; }
-    #header-container { margin-bottom: 20px; }
-    .admin-container { display: flex; flex-direction: column; gap: 20px; padding: 20px; }
-    .dashboard-header { text-align: center; font-size: 2rem; font-weight: bold; color: #003366; }
-    .panel { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); }
-    .panel h2 { margin-bottom: 15px; color: #004080; border-bottom: 2px solid #aaa; padding-bottom: 5px; }
-    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; overflow-x: auto; }
-    .admin-table th, .admin-table td { padding: 10px; border: 1px solid #ccc; text-align: left; background-color: rgba(255,255,255,0.8); }
-    .admin-table th { background-color: rgba(240,240,240,0.9); }
-    .form-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
-    .form-group input { flex: 1; padding: 10px; border-radius: 10px; border: none; background: #f2f2f2; }
-    .btn { padding: 10px 16px; border: none; background: #007bff; color: white; border-radius: 10px; cursor: pointer; transition: 0.3s; }
-    .btn:hover { background: #0056cc; }
-    @media (max-width: 768px) { .form-group { flex-direction: column; } }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+    }
+
+    header {
+      background: #4267B2;
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #fff;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      padding: 1rem;
+    }
+
+    .sidebar h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 6px;
+      color: #333;
+      transition: 0.2s;
+    }
+
+    .sidebar li:hover, .sidebar li.active {
+      background: #4267B2;
+      color: white;
+    }
+
+    .content {
+      flex: 1;
+      padding: 2rem;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background: #e4e6eb;
+    }
+
+    input, select, button {
+      margin: 5px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #4267B2;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #365899;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
   </style>
 </head>
 <body>
-  <div id="header-container"></div>
-  <div class="admin-container">
-    <div class="dashboard-header">🛠️ Admin Dashboard</div>
 
-    <!-- 📦 Manage Products -->
-    <div class="panel">
-      <h2>📦 Products</h2>
-      <div class="form-group">
-        <input type="text" id="prodName" placeholder="Product Name" />
-        <input type="text" id="prodImage" placeholder="Image URL (GitHub Raw)" />
-        <input type="text" id="prodCategory" placeholder="Category (e.g., Snacks)" />
-        <input type="text" id="prodUnit" placeholder="Unit (e.g., 1kg)" />
-        <input type="number" id="prodPrice" placeholder="Price (₹)" />
-        <button class="btn" id="addProductBtn">Add Product</button>
+<header><i class="fas fa-user-shield"></i> Admin Dashboard</header>
+
+<div class="admin-container">
+  <aside class="sidebar">
+    <h3>Manage</h3>
+    <ul>
+      <li class="nav-link active" data-section="productsSection"><i class="fas fa-box"></i> Products</li>
+      <li class="nav-link" data-section="usersSection"><i class="fas fa-users"></i> Users</li>
+      <li class="nav-link" data-section="ordersSection"><i class="fas fa-file-invoice"></i> Orders</li>
+    </ul>
+  </aside>
+
+  <main class="content">
+    <!-- 📦 Product Management -->
+    <section id="productsSection" class="section active">
+      <h2>Manage Products</h2>
+      <div class="form-grid">
+        <input type="text" id="pname" placeholder="Product Name" />
+        <input type="text" id="pcategory" placeholder="Category" />
+        <input type="text" id="punit" placeholder="Unit" />
+        <input type="number" id="pprice" placeholder="Price" />
+        <input type="text" id="pimage" placeholder="Image URL (GitHub RAW)" />
+        <button id="addProductBtn">Add Product</button>
       </div>
-      <input type="text" id="productSearch" placeholder="Search products..." class="form-group" />
-      <table class="admin-table" id="productTable">
-        <thead><tr><th>Name</th><th>Category</th><th>Unit</th><th>Price</th><th>Image</th><th>Actions</th></tr></thead>
-        <tbody id="productTableBody"></tbody>
+      <table id="productsTable">
+        <thead>
+          <tr>
+            <th>Name</th><th>Category</th><th>Unit</th><th>Price</th><th>Image</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
       </table>
-    </div>
+    </section>
 
-    <!-- 👤 Manage Users -->
-    <div class="panel">
-      <h2>👤 Users</h2>
-      <table class="admin-table" id="userTable">
-        <thead><tr><th>Name</th><th>Phone</th><th>Village</th><th>City</th><th>PIN</th><th>Landmark</th></tr></thead>
-        <tbody id="userTableBody"></tbody>
+    <!-- 👥 User Management -->
+    <section id="usersSection" class="section">
+      <h2>Manage Users</h2>
+      <table id="usersTable">
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Phone</th><th>Address</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
       </table>
-    </div>
+    </section>
 
-    <!-- 📑 Manage Orders -->
-    <div class="panel">
-      <h2>📑 Orders</h2>
-      <table class="admin-table" id="orderTable">
-        <thead><tr><th>Order ID</th><th>User</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="orderTableBody"></tbody>
+    <!-- 📄 Order Management -->
+    <section id="ordersSection" class="section">
+      <h2>Manage Orders</h2>
+      <table id="ordersTable">
+        <thead>
+          <tr>
+            <th>User</th><th>Date</th><th>Status</th><th>Total</th><th>Items</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
       </table>
-    </div>
-  </div>
+    </section>
+  </main>
+</div>
 
-  <script type="module">
-    import { db, auth } from './firebase-config.js';
-    import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+<!-- Firebase Config + Admin Script -->
+<script type="module">
+  import { db } from "./firebase-config.js";
+  import {
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    fetch("header.html").then(res => res.text()).then(data => {
-      document.getElementById("header-container").innerHTML = data;
-      document.body.style.visibility = "visible";
+  // Navigation Tabs
+  const links = document.querySelectorAll(".nav-link");
+  const sections = document.querySelectorAll(".section");
+
+  links.forEach(link => {
+    link.addEventListener("click", () => {
+      links.forEach(l => l.classList.remove("active"));
+      sections.forEach(s => s.classList.remove("active"));
+
+      link.classList.add("active");
+      document.getElementById(link.dataset.section).classList.add("active");
     });
+  });
 
-    const prodName = document.getElementById("prodName");
-    const prodImage = document.getElementById("prodImage");
-    const prodCategory = document.getElementById("prodCategory");
-    const prodUnit = document.getElementById("prodUnit");
-    const prodPrice = document.getElementById("prodPrice");
-    const addProductBtn = document.getElementById("addProductBtn");
-    const productTableBody = document.getElementById("productTableBody");
-    const productSearch = document.getElementById("productSearch");
+  // Products
+  const pname = document.getElementById("pname");
+  const pcategory = document.getElementById("pcategory");
+  const punit = document.getElementById("punit");
+  const pprice = document.getElementById("pprice");
+  const pimage = document.getElementById("pimage");
+  const addProductBtn = document.getElementById("addProductBtn");
+  const productsTable = document.getElementById("productsTable").querySelector("tbody");
 
-    let allProducts = [];
-
-    addProductBtn.addEventListener("click", async () => {
-      const newProd = {
-        name: prodName.value,
-        imageURL: prodImage.value,
-        category: prodCategory.value,
-        unit: prodUnit.value,
-        price: parseFloat(prodPrice.value)
-      };
-      try {
-        await addDoc(collection(db, "products"), newProd);
-        alert("✅ Product Added");
-        fetchProducts();
-      } catch (e) {
-        console.error("Error adding product:", e);
-      }
+  async function loadProducts() {
+    productsTable.innerHTML = "";
+    const q = await getDocs(collection(db, "products"));
+    q.forEach(docSnap => {
+      const data = docSnap.data();
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${data.name}</td>
+        <td>${data.category}</td>
+        <td>${data.unit}</td>
+        <td>₹${data.price}</td>
+        <td><img src="${data.imageURL}" width="50"/></td>
+        <td><button data-id="${docSnap.id}" class="deleteBtn">Delete</button></td>
+      `;
+      productsTable.appendChild(row);
     });
+  }
 
-    async function fetchProducts() {
-      const querySnapshot = await getDocs(collection(db, "products"));
-      allProducts = [];
-      productTableBody.innerHTML = "";
-      querySnapshot.forEach((doc) => {
-        const p = doc.data();
-        allProducts.push(p);
-        productTableBody.innerHTML += `
-          <tr>
-            <td>${p.name}</td><td>${p.category}</td><td>${p.unit}</td><td>₹${p.price}</td>
-            <td><img src="${p.imageURL}" width="40"/></td>
-            <td><button class='btn'>Edit</button></td>
-          </tr>`;
-      });
+  addProductBtn.addEventListener("click", async () => {
+    const product = {
+      name: pname.value,
+      category: pcategory.value,
+      unit: punit.value,
+      price: pprice.value,
+      imageURL: pimage.value
+    };
+    await addDoc(collection(db, "products"), product);
+    alert("Product added");
+    pname.value = pcategory.value = punit.value = pprice.value = pimage.value = "";
+    loadProducts();
+  });
+
+  productsTable.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("deleteBtn")) {
+      await deleteDoc(doc(db, "products", e.target.dataset.id));
+      loadProducts();
     }
+  });
 
-    productSearch.addEventListener("input", () => {
-      const term = productSearch.value.toLowerCase();
-      const filtered = allProducts.filter(p =>
-        p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term));
-      renderProductTable(filtered);
+  loadProducts();
+
+  // Load Users
+  const usersTable = document.getElementById("usersTable").querySelector("tbody");
+  async function loadUsers() {
+    const q = await getDocs(collection(db, "users"));
+    q.forEach(docSnap => {
+      const d = docSnap.data();
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${d.name || ''}</td>
+        <td>${d.email || ''}</td>
+        <td>${d.phone || ''}</td>
+        <td>${[d.village, d.para, d.city, d.pin, d.landmark].filter(Boolean).join(", ")}</td>
+      `;
+      usersTable.appendChild(row);
     });
+  }
+  loadUsers();
 
-    function renderProductTable(products) {
-      productTableBody.innerHTML = "";
-      products.forEach((p) => {
-        productTableBody.innerHTML += `
-          <tr>
-            <td>${p.name}</td><td>${p.category}</td><td>${p.unit}</td><td>₹${p.price}</td>
-            <td><img src="${p.imageURL}" width="40"/></td>
-            <td><button class='btn'>Edit</button></td>
-          </tr>`;
-      });
-    }
-
-    async function fetchUsers() {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      const userTableBody = document.getElementById("userTableBody");
-      userTableBody.innerHTML = "";
-      querySnapshot.forEach((doc) => {
-        const u = doc.data();
-        userTableBody.innerHTML += `
-          <tr>
-            <td>${u.name || ''}</td>
-            <td>${u.phone || ''}</td>
-            <td>${u.village || ''}</td>
-            <td>${u.city || ''}</td>
-            <td>${u.pin || ''}</td>
-            <td>${u.landmark || ''}</td>
-          </tr>`;
-      });
-    }
-
-    async function fetchOrders() {
-      const querySnapshot = await getDocs(collection(db, "orders"));
-      const orderTableBody = document.getElementById("orderTableBody");
-      orderTableBody.innerHTML = "";
-      querySnapshot.forEach((doc) => {
-        const o = doc.data();
-        orderTableBody.innerHTML += `
-          <tr>
-            <td>${doc.id}</td>
-            <td>${o.user || ''}</td>
-            <td>${o.items?.length || 0} Items</td>
-            <td>₹${o.total || 0}</td>
-            <td>${o.status || 'Pending'}</td>
-            <td><button class='btn'>Done</button></td>
-          </tr>`;
-      });
-    }
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) window.location.href = "auth.html";
-      else {
-        fetchProducts();
-        fetchUsers();
-        fetchOrders();
-      }
+  // Load Orders
+  const ordersTable = document.getElementById("ordersTable").querySelector("tbody");
+  async function loadOrders() {
+    const q = await getDocs(collection(db, "orders"));
+    q.forEach(docSnap => {
+      const d = docSnap.data();
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${d.userName || ''}</td>
+        <td>${d.date || ''}</td>
+        <td>${d.status || ''}</td>
+        <td>₹${d.total || 0}</td>
+        <td>${(d.items || []).map(i => i.name).join(", ")}</td>
+      `;
+      ordersTable.appendChild(row);
     });
-  </script>
+  }
+  loadOrders();
+</script>
+
 </body>
 </html>
