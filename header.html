@@ -6,16 +6,19 @@
     <h1 class="site-title">Banerjee Stores</h1>
   </div>
 
-  <!-- 🔹 Row 2: Navigation -->
+  <!-- 🔹 Row 2: Navigation with Icons + Names -->
   <nav class="nav-bar">
     <a href="index.html" class="nav-link" id="nav-home">
-      <i class="fas fa-home"></i> <span>Home</span>
+      <i class="fas fa-home"></i>
+      <span>Home</span>
     </a>
     <a href="cart.html" class="nav-link" id="nav-cart">
-      <i class="fas fa-shopping-cart"></i> <span>Cart</span>
+      <i class="fas fa-shopping-cart"></i>
+      <span>Cart</span>
     </a>
     <a href="account.html" class="nav-link" id="nav-account">
-      <i class="fas fa-user-circle"></i> <span>Account</span>
+      <i class="fas fa-user"></i>
+      <span>Account</span>
     </a>
   </nav>
 
@@ -61,15 +64,14 @@
 .nav-bar {
   display: flex;
   justify-content: space-around;
-  gap: 10px;
   padding: 10px 0;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 10px 16px;
   border-radius: 12px;
   text-decoration: none;
   color: #333;
@@ -101,22 +103,20 @@
 
 /* 🔁 Responsive */
 @media (max-width: 600px) {
-  .header-top {
-    flex-wrap: nowrap;
-  }
-
   .site-title {
     font-size: 18px;
   }
 
   .nav-bar {
     flex-direction: row;
-    justify-content: space-between;
-    padding: 8px;
+    justify-content: space-around;
   }
 
-  .nav-link span {
-    display: none;
+  .nav-link {
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    padding: 8px;
   }
 
   .search-box {
@@ -124,3 +124,6 @@
   }
 }
 </style>
+
+<!-- 📦 FontAwesome for Icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
