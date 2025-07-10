@@ -1,21 +1,126 @@
-<!-- 📘 Facebook-Style Header for Banerjee Stores -->
-<header style="background-color: #1877f2; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; color: white; font-family: 'Segoe UI', sans-serif;">
-
-  <!-- 🔷 Logo & Name -->
-  <div style="display: flex; align-items: center; gap: 10px;">
-    <img src="assets/logo.png" alt="Logo" style="height: 40px; border-radius: 50%;" />
-    <h1 style="font-size: 20px; margin: 0;">Banerjee Stores</h1>
+<!-- 🌟 header.html -->
+<header class="header-glass">
+  <!-- 🔷 Row 1: Logo + Website Name -->
+  <div class="header-top">
+    <img src="assets/logo.png" alt="Banerjee Stores Logo" class="logo" />
+    <h1 class="site-title">Banerjee Stores</h1>
   </div>
 
-  <!-- 🔍 Search Bar -->
-  <div style="flex: 1; max-width: 400px; margin: 0 20px;">
-    <input type="text" placeholder="Search products..." style="width: 100%; padding: 8px 12px; border-radius: 20px; border: none; outline: none;" />
-  </div>
-
-  <!-- 🔗 Navigation Icons -->
-  <nav style="display: flex; gap: 20px; align-items: center; font-size: 18px;">
-    <a href="index.html" title="Home" style="color: white; text-decoration: none;"><i class="fas fa-home"></i></a>
-    <a href="cart.html" title="Cart" style="color: white; text-decoration: none;"><i class="fas fa-shopping-cart"></i></a>
-    <a href="account.html" title="Account" style="color: white; text-decoration: none;"><i class="fas fa-user-circle"></i></a>
+  <!-- 🔹 Row 2: Navigation -->
+  <nav class="nav-bar">
+    <a href="index.html" class="nav-link" id="nav-home">
+      <i class="fas fa-home"></i> <span>Home</span>
+    </a>
+    <a href="cart.html" class="nav-link" id="nav-cart">
+      <i class="fas fa-shopping-cart"></i> <span>Cart</span>
+    </a>
+    <a href="account.html" class="nav-link" id="nav-account">
+      <i class="fas fa-user-circle"></i> <span>Account</span>
+    </a>
   </nav>
+
+  <!-- 🔍 Row 3: Search Bar -->
+  <div class="search-box">
+    <input type="text" placeholder="Search for products..." />
+  </div>
 </header>
+
+<style>
+/* 📦 Header Styles */
+.header-glass {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 4px 4px 12px #d1d9e6, -4px -4px 12px #ffffff;
+  border-radius: 0 0 20px 20px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.site-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #003c8f;
+}
+
+.nav-bar {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #333;
+  background: #ecf0f3;
+  box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: #c3e0ff;
+  color: #003c8f;
+}
+
+.search-box {
+  margin-top: 12px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 16px;
+  background: #ecf0f3;
+  box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #ffffff;
+  font-size: 14px;
+}
+
+/* 🔁 Responsive */
+@media (max-width: 600px) {
+  .header-top {
+    flex-wrap: nowrap;
+  }
+
+  .site-title {
+    font-size: 18px;
+  }
+
+  .nav-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px;
+  }
+
+  .nav-link span {
+    display: none;
+  }
+
+  .search-box {
+    margin-top: 10px;
+  }
+}
+</style>
