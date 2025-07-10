@@ -1,55 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login or Register - Banerjee Stores</title>
-  <link rel="stylesheet" href="style.css"/>
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-</head>
-<body>
+// 🔐 auth.js (used in auth.html)
+import { auth, db } from "./firebase-config.js";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  setDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <!-- 🔗 Inject Header -->
-  <div id="header-container"></div>
+// Inject header
+fetch("header.html")
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById("header-container").innerHTML = data;
+  });
 
-  <main class="auth-wrapper">
-    <div class="auth-card glass-card" id="authBox">
+// Elements
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+const showLogin = document.getElementById("showLogin");
+const showRegister = document.getElementById("showRegister");
 
-      <h2 id="formTitle">Login</h2>
+// Switch between Login/Register tabs
+showLogin.addEventListener("click", () => {
+  loginForm.classList.remove("hidden");
+  registerForm.classList.add("hidden");
+  showLogin.classList.add("active");
+  showRegister.classList.remove("active");
+});
 
-      <!-- 🔐 Login Form -->
-      <form id="loginForm" class="auth-form">
-        <input type="email" placeholder="Email" id="loginEmail" required />
-        <input type="password" placeholder="Password" id="loginPassword" required />
-        <button type="submit" class="btn-primary">Login</button>
-        <p class="toggle-text">Don't have an account? <span id="showRegister">Register</span></p>
-      </form>
+showRegister.addEventListener("click", () => {
+  loginForm.classList.add("hidden");
+  registerForm.classList.remove("hidden");
+  showRegister.classList.add("active");
+  showLogin.classList.remove("active");
+});
 
-      <!-- 📝 Register Form (Hidden by default) -->
-      <form id="registerForm" class="auth-form hidden">
-        <input type="text" placeholder="Full Name" id="regName" required />
-        <input type="email" placeholder="Email" id="regEmail" required />
-        <input type="text" placeholder="Phone" id="regPhone" required />
-        <input type="password" placeholder="Password" id="regPassword" required />
-        <button type="submit" class="btn-primary">Register</button>
-        <p class="toggle-text">Already have an account? <span id="showLogin">Login</span></p>
-      </form>
+// Login
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
 
-    </div>
-  </main>
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "account.html";
+  } catch (error) {
+    alert("Login failed: " + error.message);
+  }
+});
 
-  <!-- 🔌 Firebase -->
-  <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="auth.js"></script>
+// Register
+document.getElementById("registerBtn").addEventListener("click", async () => {
+  const name = document.getElementById("registerName").value.trim();
+  const email = document.getElementById("registerEmail").value.trim();
+  const password = document.getElementById("registerPassword").value.trim();
 
-  <!-- Inject Header -->
-  <script>
-    fetch("header.html")
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById("header-container").innerHTML = data;
-      });
-  </script>
-
-</body>
-</html>
+  try {
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(db, "users", userCred.user.uid), {
+      name,
+      email
+    });
+    alert("Registration successful!");
+    window.location.href = "account.html";
+  } catch (error) {
+    alert("Registration failed: " + error.message);
+  }
+});
