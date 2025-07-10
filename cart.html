@@ -1,0 +1,97 @@
+<!-- 🛒 Cart Page: cart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Cart - Banerjee Stores</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- 🔗 Injected Header -->
+  <div id="header-container"></div>
+
+  <!-- 🛒 Cart Wrapper -->
+  <div class="cart-wrapper">
+    <h2><i class="fas fa-shopping-cart"></i> My Cart</h2>
+    <div id="cartItems" class="cart-items">
+      <!-- Cart items will be dynamically added -->
+    </div>
+
+    <div class="cart-summary">
+      <p><strong>Total:</strong> ₹<span id="cartTotal">0</span></p>
+      <button class="btn" id="checkoutBtn">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <!-- 🔌 Firebase Config -->
+  <script type="module" src="firebase-config.js"></script>
+
+  <!-- 🛒 Cart Script -->
+  <script type="module">
+    fetch("header.html")
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById("header-container").innerHTML = data;
+      });
+
+    const cartItemsContainer = document.getElementById("cartItems");
+    const cartTotal = document.getElementById("cartTotal");
+    const checkoutBtn = document.getElementById("checkoutBtn");
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function renderCart() {
+      cartItemsContainer.innerHTML = "";
+      let total = 0;
+
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+        cartTotal.textContent = "0";
+        checkoutBtn.disabled = true;
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        total += Number(item.price);
+
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "cart-item";
+        itemDiv.innerHTML = `
+          <img src="${item.imageURL}" alt="${item.name}" />
+          <div class="cart-details">
+            <h4>${item.name}</h4>
+            <p>Unit: ${item.unit}</p>
+            <p>₹${item.price}</p>
+          </div>
+          <button class="remove-btn" data-index="${index}">🗑</button>
+        `;
+        cartItemsContainer.appendChild(itemDiv);
+      });
+
+      cartTotal.textContent = total.toFixed(2);
+      checkoutBtn.disabled = false;
+    }
+
+    // Remove item
+    cartItemsContainer.addEventListener("click", (e) => {
+      if (e.target.classList.contains("remove-btn")) {
+        const index = e.target.dataset.index;
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCart();
+      }
+    });
+
+    // Checkout
+    checkoutBtn.addEventListener("click", () => {
+      alert("Proceeding to checkout (not implemented yet).");
+    });
+
+    renderCart();
+  </script>
+
+</body>
+</html>
