@@ -1,11 +1,10 @@
-<!-- 📘 Facebook-Style index.html for Banerjee Stores -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Banerjee Stores</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -13,24 +12,29 @@
   <!-- 🔗 Injected Header -->
   <div id="header-container"></div>
 
-  <!-- 🧭 Category Filter -->
+  <!-- 🧭 Category Bar -->
   <div class="category-bar" id="categoryBar">
-    <!-- Buttons will be inserted here -->
+    <!-- Buttons injected dynamically -->
   </div>
 
-  <!-- 🛒 Product Cards -->
+  <!-- 🛍️ Products Section -->
   <section class="products-section" id="productList">
-    <!-- Product cards will be injected -->
+    <!-- Product cards injected dynamically -->
   </section>
 
   <!-- 🔌 Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
 
-  <!-- 📜 Script for dynamic content -->
+  <!-- 🚀 Script -->
   <script type="module">
     import { db } from "./firebase-config.js";
-    import { collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      collection,
+      getDocs,
+      query
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    // Inject Header
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
@@ -41,27 +45,30 @@
     const categoryBar = document.getElementById("categoryBar");
     let allProducts = [];
 
+    // Fetch Products
     async function fetchProducts() {
       const q = query(collection(db, "products"));
-      const snapshot = await getDocs(q);
+      const querySnapshot = await getDocs(q);
 
       allProducts = [];
       let categorySet = new Set();
 
-      snapshot.forEach((doc) => {
+      querySnapshot.forEach((doc) => {
         const data = doc.data();
         allProducts.push(data);
         categorySet.add(data.category);
       });
 
       renderCategories([...categorySet]);
-      renderProducts(allProducts);
+      renderProducts(allProducts); // Show all by default
     }
 
+    // Render Product Cards
     function renderProducts(products) {
       productList.innerHTML = "";
+
       if (products.length === 0) {
-        productList.innerHTML = "<p>No products found.</p>";
+        productList.innerHTML = "<p>No products available.</p>";
         return;
       }
 
@@ -69,11 +76,13 @@
         const card = document.createElement("div");
         card.className = "product-card";
         card.innerHTML = `
-          <img src="${product.imageURL}" alt="${product.name}" />
-          <div class="card-body">
+          <div class="product-img">
+            <img src="${product.imageURL}" alt="${product.name}" />
+          </div>
+          <div class="product-details">
             <h3>${product.name}</h3>
-            <p>${product.unit}</p>
-            <p>₹${product.price}</p>
+            <p>Unit: ${product.unit}</p>
+            <p>Price: ₹${product.price}</p>
             <button>Add to Cart</button>
           </div>
         `;
@@ -81,23 +90,38 @@
       });
     }
 
+    // Render Category Buttons
     function renderCategories(categories) {
       categoryBar.innerHTML = "";
 
       const allBtn = document.createElement("button");
       allBtn.textContent = "All";
-      allBtn.addEventListener("click", () => renderProducts(allProducts));
+      allBtn.dataset.category = "All";
+      allBtn.classList.add("active");
+      allBtn.addEventListener("click", () => {
+        setActiveCategory(allBtn);
+        renderProducts(allProducts);
+      });
       categoryBar.appendChild(allBtn);
 
       categories.forEach((cat) => {
         const btn = document.createElement("button");
         btn.textContent = cat;
+        btn.dataset.category = cat;
         btn.addEventListener("click", () => {
+          setActiveCategory(btn);
           const filtered = allProducts.filter(p => p.category === cat);
           renderProducts(filtered);
         });
         categoryBar.appendChild(btn);
       });
+    }
+
+    function setActiveCategory(activeBtn) {
+      document.querySelectorAll("#categoryBar button").forEach(btn => {
+        btn.classList.remove("active");
+      });
+      activeBtn.classList.add("active");
     }
 
     fetchProducts();
