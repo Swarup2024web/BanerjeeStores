@@ -1,60 +1,70 @@
-// auth.js
-import { auth } from './firebase-config.js';
+// 🔐 auth.js (used in auth.html)
+import { auth, db } from "./firebase-config.js";
 import {
-  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
+  createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  setDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// DOM Elements
-const authForm = document.getElementById("authForm");
-const authStatus = document.getElementById("authStatus");
+// Inject header
+fetch("header.html")
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById("header-container").innerHTML = data;
+  });
 
-const email = document.getElementById("authEmail");
-const password = document.getElementById("authPassword");
+// Elements
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+const showLogin = document.getElementById("showLogin");
+const showRegister = document.getElementById("showRegister");
 
-const loginBtn = document.getElementById("loginUser");
-const registerBtn = document.getElementById("registerUser");
-const logoutBtn = document.getElementById("logoutUser");
-const goToAccount = document.getElementById("goToAccount");
+// Switch between Login/Register tabs
+showLogin.addEventListener("click", () => {
+  loginForm.classList.remove("hidden");
+  registerForm.classList.add("hidden");
+  showLogin.classList.add("active");
+  showRegister.classList.remove("active");
+});
 
-// Login User
-loginBtn.addEventListener("click", async () => {
+showRegister.addEventListener("click", () => {
+  loginForm.classList.add("hidden");
+  registerForm.classList.remove("hidden");
+  showRegister.classList.add("active");
+  showLogin.classList.remove("active");
+});
+
+// Login
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+
   try {
-    await signInWithEmailAndPassword(auth, email.value, password.value);
-  } catch (err) {
-    alert(err.message);
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "account.html";
+  } catch (error) {
+    alert("Login failed: " + error.message);
   }
 });
 
-// Register User
-registerBtn.addEventListener("click", async () => {
+// Register
+document.getElementById("registerBtn").addEventListener("click", async () => {
+  const name = document.getElementById("registerName").value.trim();
+  const email = document.getElementById("registerEmail").value.trim();
+  const password = document.getElementById("registerPassword").value.trim();
+
   try {
-    await createUserWithEmailAndPassword(auth, email.value, password.value);
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(db, "users", userCred.user.uid), {
+      name,
+      email
+    });
     alert("Registration successful!");
-  } catch (err) {
-    alert(err.message);
+    window.location.href = "account.html";
+  } catch (error) {
+    alert("Registration failed: " + error.message);
   }
-});
-
-// Logout
-logoutBtn.addEventListener("click", () => signOut(auth));
-
-// Go to Account Page
-goToAccount.addEventListener("click", () => {
-  window.location.href = "account.html";
-});
-
-// Auth State Change
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    authForm.classList.add("hidden");
-    authStatus.classList.remove("hidden");
-  } else {
-    authForm.classList.remove("hidden");
-    authStatus.classList.add("hidden");
-  }
-
-  document.body.style.visibility = "visible"; // Prevent flicker
 });
