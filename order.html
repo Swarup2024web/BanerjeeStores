@@ -1,3 +1,4 @@
+<!-- 📦 Facebook-Style Order Page: order.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,27 +7,24 @@
   <title>My Orders - Banerjee Stores</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <style>
-    body { visibility: hidden; }
-  </style>
 </head>
 <body>
 
-  <!-- 🔗 Header -->
+  <!-- 🔗 Injected Header -->
   <div id="header-container"></div>
 
-  <!-- 📦 Orders -->
-  <main class="order-page">
-    <h2>🧾 My Orders</h2>
-    <div id="ordersContainer" class="orders-list">
-      <!-- Orders will load here -->
+  <!-- 📦 Orders Section -->
+  <div class="order-wrapper">
+    <h2><i class="fas fa-box"></i> My Orders</h2>
+    <div id="ordersContainer" class="orders-container">
+      <!-- Orders will be dynamically inserted here -->
     </div>
-  </main>
+  </div>
 
-  <!-- 🔌 Firebase -->
+  <!-- 🔌 Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
 
-  <!-- 🚀 Script -->
+  <!-- 📜 Orders Script -->
   <script type="module">
     import { auth, db } from "./firebase-config.js";
     import {
@@ -39,7 +37,6 @@
       getDocs
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Inject header
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
@@ -48,52 +45,40 @@
 
     const ordersContainer = document.getElementById("ordersContainer");
 
-    function formatDate(timestamp) {
-      const date = timestamp.toDate();
-      return date.toLocaleString();
-    }
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "auth.html";
+        return;
+      }
 
-    async function loadOrders(uid) {
       const q = query(
         collection(db, "orders"),
-        where("userId", "==", uid)
+        where("userId", "==", user.uid)
       );
-      const snapshot = await getDocs(q);
+      const querySnapshot = await getDocs(q);
 
-      ordersContainer.innerHTML = "";
-
-      if (snapshot.empty) {
+      if (querySnapshot.empty) {
         ordersContainer.innerHTML = "<p>No orders found.</p>";
         return;
       }
 
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const orderBox = document.createElement("div");
-        orderBox.className = "order-card";
+      querySnapshot.forEach((doc) => {
+        const order = doc.data();
 
-        const itemList = data.items.map(item => 
-          `<li>${item.name} (${item.unit}) × ${item.qty}</li>`).join("");
-
-        orderBox.innerHTML = `
-          <h3>🛒 Order ID: ${doc.id}</h3>
-          <ul>${itemList}</ul>
-          <p><strong>Total:</strong> ₹${data.total}</p>
-          <p><strong>Placed:</strong> ${formatDate(data.time)}</p>
+        const orderCard = document.createElement("div");
+        orderCard.className = "order-card";
+        orderCard.innerHTML = `
+          <h3>Order ID: ${doc.id}</h3>
+          <p><strong>Date:</strong> ${order.date || "N/A"}</p>
+          <p><strong>Status:</strong> ${order.status || "Pending"}</p>
+          <p><strong>Total:</strong> ₹${order.total || 0}</p>
+          <p><strong>Items:</strong></p>
+          <ul>
+            ${order.items.map(item => `<li>${item.name} (${item.unit}) - ₹${item.price}</li>`).join("")}
+          </ul>
         `;
-
-        ordersContainer.appendChild(orderBox);
+        ordersContainer.appendChild(orderCard);
       });
-    }
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loadOrders(user.uid);
-      } else {
-        alert("Please login to view your orders.");
-        window.location.href = "auth.html";
-      }
-      document.body.style.visibility = "visible";
     });
   </script>
 
