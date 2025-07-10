@@ -1,66 +1,86 @@
+<!-- 📘 Facebook-Style index.html for Banerjee Stores -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Banerjee Stores - Products</title>
+  <title>Banerjee Stores</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <style>
-    body { visibility: hidden; }
-  </style>
 </head>
 <body>
 
-  <!-- 🔗 Header -->
+  <!-- 🔗 Injected Header -->
   <div id="header-container"></div>
 
-  <!-- 🧭 Category Bar -->
+  <!-- 🧭 Category Filter -->
   <div class="category-bar" id="categoryBar">
-    <!-- Category buttons will be inserted here -->
+    <!-- Buttons will be inserted here -->
   </div>
 
-  <!-- 🛍️ Product Grid -->
+  <!-- 🛒 Product Cards -->
   <section class="products-section" id="productList">
-    <!-- Product cards will be injected here -->
+    <!-- Product cards will be injected -->
   </section>
 
   <!-- 🔌 Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="script.js"></script>
 
-  <!-- 🚀 Product Logic -->
+  <!-- 📜 Script for dynamic content -->
   <script type="module">
     import { db } from "./firebase-config.js";
-    import {
-      collection,
-      getDocs,
-      query
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    fetch("header.html")
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById("header-container").innerHTML = data;
+      });
 
     const productList = document.getElementById("productList");
     const categoryBar = document.getElementById("categoryBar");
-
     let allProducts = [];
 
-    // Load Products from Firebase
     async function fetchProducts() {
       const q = query(collection(db, "products"));
       const snapshot = await getDocs(q);
+
       allProducts = [];
-      const categorySet = new Set();
+      let categorySet = new Set();
 
       snapshot.forEach((doc) => {
-        const product = doc.data();
-        allProducts.push(product);
-        categorySet.add(product.category);
+        const data = doc.data();
+        allProducts.push(data);
+        categorySet.add(data.category);
       });
 
       renderCategories([...categorySet]);
-      renderProducts(allProducts); // Show all products initially
+      renderProducts(allProducts);
     }
 
-    // Render Category Buttons
+    function renderProducts(products) {
+      productList.innerHTML = "";
+      if (products.length === 0) {
+        productList.innerHTML = "<p>No products found.</p>";
+        return;
+      }
+
+      products.forEach((product) => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = `
+          <img src="${product.imageURL}" alt="${product.name}" />
+          <div class="card-body">
+            <h3>${product.name}</h3>
+            <p>${product.unit}</p>
+            <p>₹${product.price}</p>
+            <button>Add to Cart</button>
+          </div>
+        `;
+        productList.appendChild(card);
+      });
+    }
+
     function renderCategories(categories) {
       categoryBar.innerHTML = "";
 
@@ -77,33 +97,6 @@
           renderProducts(filtered);
         });
         categoryBar.appendChild(btn);
-      });
-    }
-
-    // Render Product Cards
-    function renderProducts(products) {
-      productList.innerHTML = "";
-
-      if (products.length === 0) {
-        productList.innerHTML = "<p>No products found in this category.</p>";
-        return;
-      }
-
-      products.forEach(product => {
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.innerHTML = `
-          <div class="product-img">
-            <img src="${product.imageURL}" alt="${product.name}" />
-          </div>
-          <div class="product-info">
-            <h3>${product.name}</h3>
-            <p>Unit: ${product.unit}</p>
-            <p>Price: ₹${product.price}</p>
-            <button>Add to Cart</button>
-          </div>
-        `;
-        productList.appendChild(card);
       });
     }
 
