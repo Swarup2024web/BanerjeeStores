@@ -1,25 +1,21 @@
-<header>
-  <!-- 🔹 Row 1: Logo + Site Name -->
-  <div class="header-row logo">
-    <img src="assets/logo.png" alt="Banerjee Stores" class="logo-img" />
-    <span class="logo-text">Banerjee Stores</span>
+<!-- 📘 Facebook-Style Header for Banerjee Stores -->
+<header style="background-color: #1877f2; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; color: white; font-family: 'Segoe UI', sans-serif;">
+
+  <!-- 🔷 Logo & Name -->
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <img src="assets/logo.png" alt="Logo" style="height: 40px; border-radius: 50%;" />
+    <h1 style="font-size: 20px; margin: 0;">Banerjee Stores</h1>
   </div>
 
-  <!-- 🔹 Row 2: Navigation Links -->
-  <div class="header-row navbar">
-    <a href="index.html" class="nav-link">
-      <i class="fas fa-home"></i> Home
-    </a>
-    <a href="cart.html" class="nav-link">
-      <i class="fas fa-shopping-cart"></i> Cart
-    </a>
-    <a href="account.html" class="nav-link">
-      <i class="fas fa-user"></i> Account
-    </a>
+  <!-- 🔍 Search Bar -->
+  <div style="flex: 1; max-width: 400px; margin: 0 20px;">
+    <input type="text" placeholder="Search products..." style="width: 100%; padding: 8px 12px; border-radius: 20px; border: none; outline: none;" />
   </div>
 
-  <!-- 🔹 Row 3: Search Bar -->
-  <div class="search-bar">
-    <input type="text" placeholder="Search for products..." />
-  </div>
+  <!-- 🔗 Navigation Icons -->
+  <nav style="display: flex; gap: 20px; align-items: center; font-size: 18px;">
+    <a href="index.html" title="Home" style="color: white; text-decoration: none;"><i class="fas fa-home"></i></a>
+    <a href="cart.html" title="Cart" style="color: white; text-decoration: none;"><i class="fas fa-shopping-cart"></i></a>
+    <a href="account.html" title="Account" style="color: white; text-decoration: none;"><i class="fas fa-user-circle"></i></a>
+  </nav>
 </header>
