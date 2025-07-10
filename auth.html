@@ -1,101 +1,110 @@
+<!-- 🔐 Auth Page: auth.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login / Register - Banerjee Stores</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-
-  <!-- Prevent glitch before auth -->
-  <style>
-    body { visibility: hidden; }
-  </style>
 </head>
 <body>
 
-  <!-- 🔗 Header -->
+  <!-- 🔗 Injected Header -->
   <div id="header-container"></div>
 
-  <!-- 🔐 Auth Form -->
-  <main class="auth-container">
-    <div class="auth-card" id="authForm">
-      <h2>🔐 Welcome</h2>
-      <input type="email" id="authEmail" placeholder="Email" required />
-      <input type="password" id="authPassword" placeholder="Password" required />
-      <div class="btn-group">
-        <button id="loginUser">Login</button>
-        <button id="registerUser">Register</button>
-      </div>
+  <!-- 🔐 Auth Wrapper -->
+  <div class="auth-wrapper">
+    <div class="auth-tabs">
+      <button id="showLogin" class="active">Login</button>
+      <button id="showRegister">Register</button>
     </div>
 
-    <div class="auth-card hidden" id="authStatus">
-      <h2>You are already logged in ✅</h2>
-      <button id="goToAccount">Go to Account</button>
-      <button id="logoutUser">Logout</button>
+    <!-- 🔑 Login Form -->
+    <div id="loginForm" class="auth-form">
+      <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button id="loginBtn" class="btn">Login</button>
     </div>
-  </main>
 
-  <!-- 🔌 Firebase -->
+    <!-- 📝 Register Form -->
+    <div id="registerForm" class="auth-form hidden">
+      <h2><i class="fas fa-user-plus"></i> Register</h2>
+      <input type="text" id="registerName" placeholder="Full Name" required />
+      <input type="email" id="registerEmail" placeholder="Email" required />
+      <input type="password" id="registerPassword" placeholder="Password" required />
+      <button id="registerBtn" class="btn">Register</button>
+    </div>
+  </div>
+
+  <!-- 🔌 Firebase Config -->
   <script type="module" src="firebase-config.js"></script>
 
-  <!-- 🚀 Auth Logic -->
+  <!-- 📜 Auth Script -->
   <script type="module">
-    import { auth } from './firebase-config.js';
+    import { auth, db } from "./firebase-config.js";
     import {
-      createUserWithEmailAndPassword,
       signInWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut
+      createUserWithEmailAndPassword
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      setDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Inject Header
     fetch("header.html")
       .then(res => res.text())
       .then(data => {
         document.getElementById("header-container").innerHTML = data;
-        document.body.style.visibility = "visible";
       });
 
-    const authForm = document.getElementById("authForm");
-    const authStatus = document.getElementById("authStatus");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const showLogin = document.getElementById("showLogin");
+    const showRegister = document.getElementById("showRegister");
 
-    const email = document.getElementById("authEmail");
-    const password = document.getElementById("authPassword");
+    showLogin.addEventListener("click", () => {
+      loginForm.classList.remove("hidden");
+      registerForm.classList.add("hidden");
+      showLogin.classList.add("active");
+      showRegister.classList.remove("active");
+    });
 
-    const loginBtn = document.getElementById("loginUser");
-    const registerBtn = document.getElementById("registerUser");
-    const logoutBtn = document.getElementById("logoutUser");
-    const goToAccount = document.getElementById("goToAccount");
+    showRegister.addEventListener("click", () => {
+      loginForm.classList.add("hidden");
+      registerForm.classList.remove("hidden");
+      showRegister.classList.add("active");
+      showLogin.classList.remove("active");
+    });
 
-    loginBtn.addEventListener("click", async () => {
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
       try {
-        await signInWithEmailAndPassword(auth, email.value, password.value);
-      } catch (err) {
-        alert(err.message);
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "account.html";
+      } catch (error) {
+        alert("Login failed: " + error.message);
       }
     });
 
-    registerBtn.addEventListener("click", async () => {
+    document.getElementById("registerBtn").addEventListener("click", async () => {
+      const name = document.getElementById("registerName").value;
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+
       try {
-        await createUserWithEmailAndPassword(auth, email.value, password.value);
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, "users", userCred.user.uid), {
+          name,
+          email
+        });
         alert("Registration successful!");
-      } catch (err) {
-        alert(err.message);
-      }
-    });
-
-    logoutBtn.addEventListener("click", () => signOut(auth));
-    goToAccount.addEventListener("click", () => window.location.href = "account.html");
-
-    // Auth Check
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        authForm.classList.add("hidden");
-        authStatus.classList.remove("hidden");
-      } else {
-        authForm.classList.remove("hidden");
-        authStatus.classList.add("hidden");
+        window.location.href = "account.html";
+      } catch (error) {
+        alert("Registration failed: " + error.message);
       }
     });
   </script>
