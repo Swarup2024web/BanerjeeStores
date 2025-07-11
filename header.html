@@ -1,15 +1,15 @@
 <!-- 🌟 header.html -->
-<header class="header-glass">
+<header class="site-header glassy-color">
   <!-- 🔷 Row 1: Logo + Website Name -->
-  <div class="header-top">
-    <img src="assets/logo.png" alt="Banerjee Stores Logo" class="logo" />
-    <h1 class="site-title">Banerjee Stores</h1>
+  <div class="header-row header-top">
+    <img src="assets/logo.png" alt="Banerjee Stores Logo" class="header-logo" />
+    <h1 class="site-name">Banerjee Stores</h1>
   </div>
 
-  <!-- 🔹 Row 2: Navigation with Icons + Names -->
-  <nav class="nav-bar">
+  <!-- 🔹 Row 2: Navigation with Icons + Labels -->
+  <nav class="header-row nav-bar">
     <a href="index.html" class="nav-link" id="nav-home">
-      <i class="fas fa-home"></i>
+      <i class="fas fa-store"></i>
       <span>Home</span>
     </a>
     <a href="cart.html" class="nav-link" id="nav-cart">
@@ -17,113 +17,115 @@
       <span>Cart</span>
     </a>
     <a href="account.html" class="nav-link" id="nav-account">
-      <i class="fas fa-user"></i>
+      <i class="fas fa-user-circle"></i>
       <span>Account</span>
     </a>
   </nav>
 
   <!-- 🔍 Row 3: Search Bar -->
-  <div class="search-box">
+  <div class="header-row search-bar">
     <input type="text" placeholder="Search for products..." />
   </div>
 </header>
 
+<!-- Font Awesome Icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
 <style>
-/* 📦 Header Styles */
-.header-glass {
+/* 🌈 Glassy Color Header */
+.glassy-color {
   width: 100%;
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 4px 4px 12px #d1d9e6, -4px -4px 12px #ffffff;
+  background: linear-gradient(145deg, rgba(173, 216, 230, 0.7), rgba(255, 255, 255, 0.5));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 8px 8px 18px rgba(0, 0, 0, 0.1), -8px -8px 18px rgba(255, 255, 255, 0.6);
   border-radius: 0 0 20px 20px;
-  padding: 10px 20px;
+  padding: 16px 20px;
   margin-bottom: 20px;
 }
 
-.header-top {
+/* Rows */
+.header-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  margin-bottom: 12px;
 }
 
-.logo {
+.header-top {
+  gap: 12px;
+}
+
+.header-logo {
   width: 48px;
   height: 48px;
-  object-fit: contain;
   border-radius: 12px;
+  object-fit: contain;
 }
 
-.site-title {
-  font-size: 20px;
+.site-name {
+  font-size: 22px;
   font-weight: 700;
-  color: #003c8f;
+  color: #1a237e;
 }
 
+/* Nav Bar */
 .nav-bar {
-  display: flex;
   justify-content: space-around;
-  padding: 10px 0;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
-  border-radius: 12px;
   text-decoration: none;
-  color: #333;
-  background: #ecf0f3;
-  box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
   font-weight: 500;
-  transition: 0.3s;
+  padding: 10px 16px;
+  color: #333;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  transition: 0.3s ease;
+  box-shadow: inset 2px 2px 5px #c8d6e5, inset -2px -2px 5px #ffffff;
 }
 
 .nav-link:hover,
 .nav-link.active {
-  background: #c3e0ff;
-  color: #003c8f;
+  background: #a3d5ff;
+  color: #004080;
+  box-shadow: 0 0 10px #a3d5ff;
 }
 
-.search-box {
-  margin-top: 12px;
-}
-
-.search-box input {
+/* Search Bar */
+.search-bar input {
   width: 100%;
   padding: 12px 16px;
   border: none;
   border-radius: 16px;
-  background: #ecf0f3;
-  box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #ffffff;
   font-size: 14px;
+  background: #f1f5f9;
+  box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
 }
 
-/* 🔁 Responsive */
+/* Responsive */
 @media (max-width: 600px) {
-  .site-title {
+  .site-name {
     font-size: 18px;
-  }
-
-  .nav-bar {
-    flex-direction: row;
-    justify-content: space-around;
   }
 
   .nav-link {
     flex-direction: column;
-    gap: 4px;
     font-size: 12px;
     padding: 8px;
   }
 
-  .search-box {
-    margin-top: 10px;
+  .header-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .search-bar input {
+    font-size: 13px;
   }
 }
-</style>
-
-<!-- 📦 FontAwesome for Icons -->
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  </style>
